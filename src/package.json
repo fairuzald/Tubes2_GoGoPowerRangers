@@ -1,30 +1,21 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "next-dev": "next dev",
-    "golang": "go run services/main.go",
-    "dev": "concurrently \"npm run next-dev\" \"npm run golang\"",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "concurrently": "^8.2.2",
-    "next": "14.1.4",
-    "react": "^18",
-    "react-dom": "^18"
+    "build": "(cd packages/frontend && npm run build)",
+    "start:backend": "cd packages/backend && go run ./main.go",
+    "start": "npm run support && concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "dev:backend": "cd packages/backend && go run ./main.go",
+    "dev:frontend": "cd packages/frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "support": "docker-compose up",
+    "prod-run": "docker-compose -f docker-compose.prod-run.yml up",
+    "prod-build": "docker-compose -f docker-compose.prod-build.yml up"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.4",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "concurrently": "^8.2.1",
+    "typescript": "^5.2.2"
   }
 }

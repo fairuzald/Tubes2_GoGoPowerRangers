@@ -1,0 +1,10 @@
+# Ignore node_modules directory for frontend
+/packages/frontend/node_modules
+/packages/frontend/.next
+
+# Ignore binary files and build artifacts for backend
+/packages/backend/*.exe
+/packages/backend/*.dll
+/packages/backend/*.so
+/packages/backend/*.o
+/packages/backend/*.a

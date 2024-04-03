@@ -1,0 +1,13 @@
+version: '3'
+services:
+  frontend:
+    container_name: frontend-container
+    image: frontend-image:latest
+    ports:
+      - "3000:3000"
+
+  backend:
+    container_name: backend-container
+    image: backend-image:latest
+    ports:
+      - "8080:8080"
