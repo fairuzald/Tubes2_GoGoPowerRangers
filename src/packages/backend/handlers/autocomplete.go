@@ -11,21 +11,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AutoCompleteHandler handles autocomplete requests to fetch data from the Wikipedia API
 func AutoCompleteHandler(c *gin.Context) {
 	// Get search term and limit from query parameter
 	searchTerm := c.Query("search")
 	limit := c.Query("limit")
 
-	// Create query parameters to send API request to Wikipedia
+	// Create query parameters for the Wikipedia API request
 	queryParams := url.Values{}
 	queryParams.Set("action", "query")
 	queryParams.Set("format", "json")
 	queryParams.Set("gpssearch", searchTerm)
 	queryParams.Set("generator", "prefixsearch")
-	queryParams.Set("prop", "pageprops|pageimages|pageterms")
+	queryParams.Set("prop", "pageprops|pageimages|pageterms|info")
+	queryParams.Set("inprop", "url")
 	queryParams.Set("redirects", "")
 	queryParams.Set("ppprop", "displaytitle")
 	queryParams.Set("piprop", "thumbnail")
+	queryParams.Set("pilimit", "max")
 	// Set the thumbnail maximum size to 160px
 	queryParams.Set("pithumbsize", "160")
 	queryParams.Set("wbptterms", "description")
@@ -33,24 +36,23 @@ func AutoCompleteHandler(c *gin.Context) {
 
 	// Set gpslimit only if limit is provided and is not null
 	if limit != "" {
-		// Set gpslimit only
 		queryParams.Set("gpslimit", limit)
 	}
 
 	queryParams.Set("origin", "*")
 
-	// Create URL to Wikipedia API and add the params
-	url := fmt.Sprintf("https://en.wikipedia.org/w/api.php?%s", queryParams.Encode())
+	// Create the URL for the Wikipedia API request
+	apiURL := fmt.Sprintf("https://en.wikipedia.org/w/api.php?%s", queryParams.Encode())
 
-	// Shoot the request to Wikipedia API
-	resp, err := http.Get(url)
+	// Send the GET request to Wikipedia API
+	resp, err := http.Get(apiURL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to fetch data from Wikipedia"})
 		return
 	}
 	defer resp.Body.Close()
 
-	// Decode JSON response from Wikipedia API based on model
+	// Decode the JSON response from Wikipedia API into the AutoComplete struct
 	var result models.AutoComplete
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
@@ -58,22 +60,21 @@ func AutoCompleteHandler(c *gin.Context) {
 		return
 	}
 
-	// Validation if there is no result
+	// Handle the case when there are no results
 	if len(result.Query.Pages) == 0 {
 		c.JSON(http.StatusOK, []gin.H{})
 		return
 	}
 
-	// Format the result to be more readable
+	// Format and append the results to allResults
 	var formattedResults []gin.H
+
 	for _, page := range result.Query.Pages {
-		// Make sure the description is not empty and only take the first one
 		description := ""
 		if len(page.Terms.Description) > 0 {
 			description = page.Terms.Description[0]
 		}
 
-		// Format the result
 		formattedResult := gin.H{
 			"pageid":      page.PageID,
 			"title":       page.Title,
@@ -83,9 +84,13 @@ func AutoCompleteHandler(c *gin.Context) {
 				"width":  page.Thumbnail.Width,
 				"height": page.Thumbnail.Height,
 			},
+			"url": page.FullURL,
 		}
 		formattedResults = append(formattedResults, formattedResult)
 	}
 
+	// Check if there is a continue parameter in the response
+
+	// Return the combined formatted results as JSON
 	c.JSON(http.StatusOK, formattedResults)
 }

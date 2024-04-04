@@ -12,6 +12,5 @@ func SetupRouter() *gin.Engine {
 	r.GET("/ping", handlers.PingHandler)
 	r.POST("/api/algorithm", handlers.PostAlgorithmHandler)
 	r.GET("/api/autocomplete", handlers.AutoCompleteHandler)
-
 	return r
 }

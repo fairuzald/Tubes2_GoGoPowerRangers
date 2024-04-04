@@ -3,11 +3,15 @@ package models
 // AutoComplete struct to decode JSON response from Wikipedia API
 type AutoComplete struct {
 	BatchComplete string `json:"batchcomplete"`
-	Continue      struct {
+	Continue      *struct {
 		GpsOffset int    `json:"gpsoffset"`
-		Continue  string `json:"continue"`
-	} `json:"continue"`
+		Continue  string `json:"continue,omitempty"`
+	} `json:"continue,omitempty"`
 	Query struct {
+		Continue struct {
+			PicContinue int    `json:"picontinue"`
+			Continue    string `json:"continue,omitempty"`
+		}
 		Redirects []struct {
 			Index int    `json:"index"`
 			From  string `json:"from"`
@@ -30,4 +34,5 @@ type Page struct {
 	Terms struct {
 		Description []string
 	}
+	FullURL string `json:"fullurl"`
 }
