@@ -1,58 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 )
-
-func ScrapingHandler(url string) ([]map[string]string, error) {
-	// Request the HTML page.
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("status code error: %d %s", res.StatusCode, res.Status)
-	}
-
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	// Find all links with href starting with "https://en.wikipedia.org/wiki/"
-	links := make([]map[string]string, 0)
-
-	// Create a map to store and identify unique links set
-	linkMap := make(map[string]bool)
-
-	// Find all links with href starting with "/wiki/" and without colon ":" (Not wiki link but only distractor like Wikipedia news, recent events, file image, etc. )
-	doc.Find("a[href^='/wiki/']").Each(func(i int, s *goquery.Selection) {
-		// Get the href attribute value
-		link, _ := s.Attr("href")
-
-		// Check if the link contains a colon ":"
-		if !strings.Contains(link, ":") {
-			// Check if the link is not already in the map
-			if !linkMap[link] {
-				// Add the link to the map and result array
-				linkMap[link] = true
-				links = append(links, map[string]string{
-					"title": s.Text(),
-					"link":  "https://en.wikipedia.org" + link,
-				})
-			}
-		}
-	})
-
-	return links, nil
-}
 
 type AlgorithmParams struct {
 	Title string
@@ -67,10 +19,6 @@ func BFSAlgorithm(source AlgorithmParams, destination AlgorithmParams) ([]Route,
 	// Initialize queue for BFS
 	queue := make([]AlgorithmParams, 0)
 	queue = append(queue, source)
-
-	// Initialize storage to prevent same link scrapping
-	storage := make(map[string][]AlgorithmParams)
-	storage[source.Link] = make()
 
 	// Initialize routes array to store all possible routes
 	var routes []Route
@@ -88,25 +36,25 @@ func BFSAlgorithm(source AlgorithmParams, destination AlgorithmParams) ([]Route,
 		}
 
 		// Perform scraping to get links from current node
-		links, err := ScrapingHandler(currentNode.Link)
-		linkMap := make(map[string]string)
+		links, err := handlers.ScrapingHandler(currentNode.Link)
+		// linkMap := make(map[string]string)
 		if err != nil {
 			return nil, 0, err
 		}
 
 		// Find neighbors of currentNode
-		for _, link := range links {
-			if !visited[link["link"]] {
-				queue = append(queue, AlgorithmParams{
-					Title: link["title"],
-					Link:  link["link"],
-				})
-				visited[link["link"]] = true
-				parent[link["link"]] = currentNode.Link
-				linkMap[link["title"]] = link["link"]
-			}
-		}
-		storage[currentNode.Link] = linkMap
+		// for _, link := range links {
+		// 	if !visited[link["link"]] {
+		// 		queue = append(queue, AlgorithmParams{
+		// 			Title: link["title"],
+		// 			Link:  link["link"],
+		// 		})
+		// 		visited[link["link"]] = true
+		// 		parent[link["link"]] = currentNode.Link
+		// 		linkMap[link["title"]] = link["link"]
+		// 	}
+		// }
+		// storage[currentNode.Link] = linkMap
 	}
 
 	// If destination found, reconstruct all possible routes
