@@ -5,19 +5,22 @@ FROM node:lts AS frontend
 WORKDIR /app/packages/frontend
 
 # Copy package.json and package-lock.json
-COPY packages/frontend/package*.json ./
+COPY package*.json ./
 
 # Install dependencies for frontend
 RUN npm install
 
 # Copy the rest of the frontend application
-COPY packages/frontend/ .
+COPY . .
 
 # Build the frontend (if needed)
 RUN npm run build
 
 # Expose the port used by the frontend application
 EXPOSE 3000
+
+LABEL maintainer="GoGoPowerRangers"
+LABEL description="This is a frontend Docker image for application."
 
 # Start the frontend server
 CMD ["npm", "start"]
