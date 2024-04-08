@@ -21,8 +21,6 @@ export default function InputQuery() {
     setDestinationData(temp);
   };
 
-
-
   return (
     <div className="flex gap-7 w-full max-w-[1300px]">
       {/* AutoCompleteInput for source */}
