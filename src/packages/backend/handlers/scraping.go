@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gin-gonic/gin"
 )
 
-func ScrapingHandler(url string) ([]map[string]string, error) {
+func ScrapperHandlerLink(url string) ([]string, error) {
 	// Request the HTML page.
 	res, err := http.Get(url)
 	if err != nil {
@@ -25,30 +26,43 @@ func ScrapingHandler(url string) ([]map[string]string, error) {
 		return nil, err
 	}
 
-	// Find all links with href starting with "https://en.wikipedia.org/wiki/"
-	links := make([]map[string]string, 0)
-
-	// Create a map to store and identify unique links set
+	// Find all links with href starting with "/wiki/" and without colon ":"
+	links := make([]string, 0)
 	linkMap := make(map[string]bool)
 
-	// Find all links with href starting with "/wiki/" and without colon ":" (Not wiki link but only distractor like Wikipedia news, recent events, file image, etc. )
 	doc.Find("a[href^='/wiki/']").Each(func(i int, s *goquery.Selection) {
-		// Get the href attribute value
 		link, _ := s.Attr("href")
-
-		// Check if the link contains a colon ":"
 		if !strings.Contains(link, ":") {
-			// Check if the link is not already in the map
 			if !linkMap[link] {
-				// Add the link to the map and result array
 				linkMap[link] = true
-				links = append(links, map[string]string{
-					"title": s.Text(),
-					"link":  "https://en.wikipedia.org" + link,
-				})
+				links = append(links, "https://en.wikipedia.org"+link)
 			}
 		}
 	})
 
 	return links, nil
+}
+
+func ScrapingHandlerPost(c *gin.Context) {
+	type ReqBody struct {
+		Url string `json:"url"`
+	}
+
+	var reqBody ReqBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	links, err := ScrapperHandlerLink(reqBody.Url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform BFS algorithm"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Data diterima",
+		"links":   links,
+		"count":   len(links),
+	})
 }
