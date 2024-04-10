@@ -47,6 +47,7 @@ def bfs(source, destination, graph):
         current_url, paths = queue.pop(0)
         if current_url == destination:
             path.append(paths)
+            return paths
         else:
             try:
                 links = graph.get(current_url)

@@ -7,35 +7,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func BFSHandlers(source string, destination string) ([][]string, error) {
+func BFSHandlers(source string, destination string, maxDepth int) ([][]string, error) {
 	if source == destination {
 		return [][]string{{source}}, nil
 	}
 
 	queue := [][]string{{source}}
-	visited := map[string]bool{source: true}
-	var paths [][]string
+	visited := make(map[string]bool)
+	paths := [][]string{}
+	found := false
 
-	for len(queue) > 0 {
-		currentURLs := queue[0]
+	for len(queue) > 0 && len(paths) < maxDepth && !found {
+		currentURL := queue[0]
 		queue = queue[1:]
 
-		currentURL := currentURLs[len(currentURLs)-1]
-		if currentURL == destination {
-			paths = append(paths, currentURLs)
-		}
+		currentPath := currentURL
+		currentNode := currentURL[len(currentURL)-1]
 
-		links, err := ScrapperHandlerLink(currentURL)
-		if err != nil {
-			return nil, fmt.Errorf("error while processing %s: %s", currentURL, err)
-		}
+		if currentNode == destination {
+			if !found {
+				found = true
+			}
+			paths = append(paths, currentPath)
+			return paths, nil
+		} else if !found {
+			links, err := ScrapperHandlerLink(currentNode)
+			if err != nil {
+				return nil, fmt.Errorf("error while processing %s: %s", currentNode, err)
+			}
 
-		for _, link := range links {
-			if !visited[link] {
-				visited[link] = true
-				newPath := append([]string{}, currentURLs...)
-				newPath = append(newPath, link)
-				queue = append(queue, newPath)
+			for _, link := range links {
+				if !visited[link] && len(currentPath) < maxDepth {
+					visited[link] = true
+					newPath := append(currentPath, link)
+					queue = append(queue, newPath)
+				}
 			}
 		}
 	}
@@ -44,7 +50,6 @@ func BFSHandlers(source string, destination string) ([][]string, error) {
 }
 
 func PostAlgorithmHandler(c *gin.Context) {
-
 	type ReqBody struct {
 		Source      string `json:"source"`
 		Destination string `json:"destination"`
@@ -56,7 +61,7 @@ func PostAlgorithmHandler(c *gin.Context) {
 		return
 	}
 
-	paths, err := BFSHandlers(reqBody.Source, reqBody.Destination)
+	paths, err := BFSHandlers(reqBody.Source, reqBody.Destination, 6)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform BFS algorithm"})
 		return

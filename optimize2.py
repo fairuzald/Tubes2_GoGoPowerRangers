@@ -30,7 +30,7 @@ def bfs(source, destination, max_depth=6):
         return [[source]]
 
     queue = [(source, [source])]
-    visited = set()
+    visited = [{source:True}]
     path = []
     found = False
 
@@ -45,8 +45,8 @@ def bfs(source, destination, max_depth=6):
             try:
                 links = scraping_handler(current_url)
                 for link in links:
-                    if link not in visited and len(paths) < max_depth:
-                        visited.add(link)
+                    if (link not in visited or not visited[link]) and len(paths) < max_depth:
+                        visited.append({link:True})
                         queue.append((link, paths + [link]))
             except Exception as e:
                 print(f"Error while processing {current_url}: {e}")
@@ -56,7 +56,7 @@ def bfs(source, destination, max_depth=6):
 # Example usage
 start = time.time()
 source ="https://en.wikipedia.org/wiki/Joko_Widodo"
-destination ="Destination", "https://en.wikipedia.org/wiki/Vladimir_Putin"
+destination ="Destination", "https://en.wikipedia.org/wiki/Rengasdengklok_Incident"
 routes = bfs(source, destination)
 end = time.time()
 print(f"Execution time: {end - start} seconds")

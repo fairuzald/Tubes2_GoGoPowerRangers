@@ -1,5 +1,6 @@
-import requests
+from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
+import requests
 import time
 
 class AlgorithmParams:
@@ -30,33 +31,35 @@ def bfs(source, destination, max_depth=6):
         return [[source]]
 
     queue = [(source, [source])]
-    visited = set()
+    visited = [{source: True}]
     path = []
     found = False
 
-    while queue or len(paths) < max_depth and len(queue) >0 and found:
-        current_url, paths = queue.pop(0)
-        if current_url == destination:
-            if not found:
-                found = True
-            path.append(paths)
-            return path
-        elif not found:
-            try:
-                links = scraping_handler(current_url)
-                for link in links:
-                    if link not in visited and len(paths) < max_depth:
-                        visited.add(link)
-                        queue.append((link, paths + [link]))
-            except Exception as e:
-                print(f"Error while processing {current_url}: {e}")
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        while queue and len(path) < max_depth and not found:
+            current_url, paths = queue.pop(0)
+            if current_url == destination:
+                if not found:
+                    found = True
+                path.append(paths)
+                return path
+            elif not found:
+                try:
+                    with executor as pool:
+                        links = pool.submit(scraping_handler, current_url).result()
+                    for link in links:
+                        if (link not in visited or not visited[link]) and len(paths) < max_depth:
+                            visited.append({link: True})
+                            queue.append((link, paths + [link]))
+                except Exception as e:
+                    print(f"Error while processing {current_url}: {e}")
 
     return path if path else []
 
 # Example usage
 start = time.time()
-source ="https://en.wikipedia.org/wiki/Joko_Widodo"
-destination ="Destination", "https://en.wikipedia.org/wiki/Vladimir_Putin"
+source = "https://en.wikipedia.org/wiki/Joko_Widodo"
+destination = "https://en.wikipedia.org/wiki/Rengasdengklok_Incident"
 routes = bfs(source, destination)
 end = time.time()
 print(f"Execution time: {end - start} seconds")
