@@ -29,7 +29,6 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 				found = true
 			}
 			paths = append(paths, currentPath)
-			return paths, nil
 		} else if !found {
 			links, err := ScrapperHandlerLink(currentNode)
 			if err != nil {
