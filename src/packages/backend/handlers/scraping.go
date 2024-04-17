@@ -40,7 +40,7 @@ func ScrapeLink(url string, wg *sync.WaitGroup, linkCh chan<- string, visitedLin
 	return nil
 }
 
-func ScrapeLinksAsync(url string) ([]string, error) {
+func ScrapeLinksSync(url string) ([]string, error) {
 	var wg sync.WaitGroup
 	linkCh := make(chan string, 1000)
 	var links []string
@@ -153,7 +153,7 @@ func ScrapingHandlerPost(c *gin.Context) {
 		links, err = ScrapperHandlerLinkBuffer(reqBody.Url)
 	} else if use == "sync" {
 		tes = "sync"
-		links, err = ScrapeLinksAsync(reqBody.Url)
+		links, err = ScrapeLinksSync(reqBody.Url)
 	} else {
 		tes = "normal"
 		links, err = ScrapperHandlerLink(reqBody.Url)
