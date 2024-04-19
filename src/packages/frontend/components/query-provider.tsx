@@ -1,4 +1,5 @@
 "use client"
+import { PathInfo } from '@/types/result';
 import React, { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react';
 
 // Define the initial state and action types
@@ -7,6 +8,9 @@ export type State = {
   destination: string;
   selectedSource: string;
   selectedDestination: string;
+  result: PathInfo[][];
+  method: 'bfs' | 'ids';
+  bonus: boolean;
 };
 
 export type Action =
@@ -14,6 +18,9 @@ export type Action =
   | { type: 'SET_DESTINATION'; payload: string }
   | { type: 'SET_SELECTED_SOURCE'; payload: string }
   | { type: 'SET_SELECTED_DESTINATION'; payload: string }
+  | { type: 'SET_RESULT'; payload: PathInfo[][] }
+  | { type: 'SET_METHOD'; payload: 'bfs' | 'ids' }
+  | { type: 'SET_BONUS'; payload: boolean }
   | { type: 'SWAP' };
 
 const initialState: State = {
@@ -21,6 +28,9 @@ const initialState: State = {
   destination: '',
   selectedSource: '',
   selectedDestination: '',
+  result: [],
+  method: 'bfs',
+  bonus: false,
 };
 
 // Reducer function
@@ -34,6 +44,12 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, selectedSource: action.payload };
     case 'SET_SELECTED_DESTINATION':
       return { ...state, selectedDestination: action.payload };
+    case 'SET_RESULT':
+      return { ...state, result: action.payload };
+    case 'SET_METHOD':
+      return { ...state, method: action.payload };
+    case 'SET_BONUS':
+      return { ...state, bonus: action.payload };
     case 'SWAP':
       return {
         ...state,

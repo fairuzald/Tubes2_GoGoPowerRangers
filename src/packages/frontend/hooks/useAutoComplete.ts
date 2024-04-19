@@ -19,8 +19,8 @@ const useAutoComplete = (searchQuery: string): [AutoCompleteData[], (data: AutoC
         throw new Error('Network response was not ok');
       }
 
-      const fetchedData: AutoCompleteData[] = await response.json();
-      setData(fetchedData);
+      const fetchedData = await response.json();
+      setData(fetchedData.data as AutoCompleteData[]);
     } catch (error) {
       console.error('Error fetching data:', error);
       const errMsg = error instanceof Error ? error.message : 'Unknown error occurred';

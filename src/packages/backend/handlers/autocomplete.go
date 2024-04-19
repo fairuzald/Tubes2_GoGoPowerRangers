@@ -62,7 +62,7 @@ func AutoCompleteHandler(c *gin.Context) {
 
 	// Handle the case when there are no results
 	if len(result.Query.Pages) == 0 {
-		c.JSON(http.StatusOK, []gin.H{})
+		c.JSON(http.StatusOK, gin.H{"data": nil, "message": "No results found"})
 		return
 	}
 
@@ -79,18 +79,17 @@ func AutoCompleteHandler(c *gin.Context) {
 			"pageid":      page.PageID,
 			"title":       page.Title,
 			"description": description,
-			"image": gin.H{
-				"url":    page.Thumbnail.Source,
-				"width":  page.Thumbnail.Width,
-				"height": page.Thumbnail.Height,
-			},
-			"url": page.FullURL,
+			"image":       page.Thumbnail.Source,
+			"url":         page.FullURL,
 		}
 		formattedResults = append(formattedResults, formattedResult)
 	}
 
-	// Check if there is a continue parameter in the response
-
 	// Return the combined formatted results as JSON
-	c.JSON(http.StatusOK, formattedResults)
+	if len(formattedResults) == 0 {
+		c.JSON(http.StatusOK, gin.H{"data": nil, "message": "No results found"})
+
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": formattedResults, "message": "Results retrieved successfully"})
+	}
 }

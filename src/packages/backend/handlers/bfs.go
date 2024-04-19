@@ -14,11 +14,6 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 		return [][]string{{source}}, nil
 	}
 
-	type Result struct {
-		Links []string
-		Err   error
-	}
-
 	queue := [][]string{{source}}
 	visited := make(map[string]struct{})
 	paths := [][]string{}
@@ -49,16 +44,17 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 				go func(currentNode string, path []string) {
 					defer wg.Done()
 					links, err := ScrapeLinksSync(currentNode)
-					result := Result{Links: links, Err: err}
 
-					if result.Err != nil {
+					if err != nil {
 						// Handle error
-						return
+						fmt.Print(err)
+						return // Return to avoid deadlock
+
 					}
 
 					mutex.Lock()
 					defer mutex.Unlock()
-					for _, link := range result.Links {
+					for _, link := range links {
 						if _, ok := visited[link]; !ok {
 							visited[link] = struct{}{}
 							newPath := append([]string(nil), path...)

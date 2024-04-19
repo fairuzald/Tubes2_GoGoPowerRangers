@@ -4,11 +4,8 @@ type AutoCompleteData = {
     title: string;
     url: string;
     description: string;
-    image: {
-      url: string;
-      width: number;
-      height: number;
-    }
+   image:string;
   }
 
   export type { AutoCompleteData };
+

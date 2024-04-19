@@ -70,7 +70,7 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({ data, onSelectVal
             />
 
             {/* Content */}
-            {isOpen && (
+            {isOpen && data && data.length>0&& (
                 <ul
                     ref={dropdownRef}
                     className="rounded-lg absolute top-16 bg-white text-black max-h-[600px] custom-scrollbar overflow-y-auto overflow-x-hidden w-full"
@@ -93,7 +93,7 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({ data, onSelectVal
                         >
                             {/* Image display */}
                             <Image
-                                src={item.image.url || '/default.png'}
+                                src={item.image || '/default.png'}
                                 width={80}
                                 height={80}
                                 alt={item.title}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,11 @@ import (
 func ScrapeLink(url string, wg *sync.WaitGroup, linkCh chan<- string, visitedLinks map[string]bool) error {
 	defer wg.Done()
 
-	res, err := http.Get(url)
+	client := &http.Client{
+		Timeout: time.Second * 10, // Set a timeout of 10 seconds
+	}
+
+	res, err := client.Get(url)
 	if err != nil {
 		return fmt.Errorf("failed to request URL: %w", err)
 	}
@@ -96,8 +101,12 @@ func ScrapperHandlerLink(url string) ([]string, error) {
 }
 
 func ScrapperHandlerLinkBuffer(url string) ([]string, error) {
+	client := &http.Client{
+		Timeout: time.Second * 10, // Set a timeout of 10 seconds
+	}
+
+	res, err := client.Get(url)
 	// Request the HTML page.
-	res, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request URL: %w", err)
 	}
