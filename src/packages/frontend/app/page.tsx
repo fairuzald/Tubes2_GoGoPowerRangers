@@ -2,14 +2,17 @@
 import InputQuery from "@/components/input-query";
 import { useQueryContext } from "@/components/query-provider";
 import type { PathInfo } from "@/types/result";
-import React from 'react'; // Added import for React
+import React from "react"; // Added import for React
 import toast from "react-hot-toast";
+import Hero from "@/components/hero";
+import SearchButton from "@/components/search-button";
+import CardGrid from "@/components/individual-paths";
 
 // Cache to store URL info results
 const infoCache = new Map<string, PathInfo>();
 
 const fetchInfoUrl = async (url: string) => {
-  if (!url) throw new Error('No url provided');
+  if (!url) throw new Error("No url provided");
 
   // Check cache before making a request to the server
   if (infoCache.has(url)) {
@@ -19,15 +22,15 @@ const fetchInfoUrl = async (url: string) => {
   try {
     const response = await fetch("/api/url-info", {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ url }),
     });
 
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong');
+      throw new Error(data.message || "Something went wrong");
     }
 
     const info = data.data;
@@ -36,7 +39,7 @@ const fetchInfoUrl = async (url: string) => {
     return info;
   } catch (err) {
     console.error(err);
-    const errMsg = err instanceof Error ? err.message : 'Something went wrong';
+    const errMsg = err instanceof Error ? err.message : "Something went wrong";
     toast.error(errMsg);
   }
 };
@@ -47,33 +50,39 @@ export default function Home() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validation check
-    if (!state.selectedSource || !state.selectedDestination) return toast.error('Please select source and destination from select input');
+    if (!state.selectedSource || !state.selectedDestination)
+      return toast.error(
+        "Please select source and destination from select input"
+      );
 
     // Binding loading toast to a variable
-    const loading = toast.loading('Finding path...');
+    const loading = toast.loading("Finding path...");
 
     // Fetching data from the server
     try {
-      const url = state.method ==='ids' ? '/api/ids' : '/api/bfs';
+      const url = state.method === "ids" ? "/api/ids" : "/api/bfs";
       const response = await fetch(url, {
-        cache: 'no-cache',
+        cache: "no-cache",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        method: 'POST',
-        body: JSON.stringify({ source: state.selectedSource, destination: state.selectedDestination }),
+        method: "POST",
+        body: JSON.stringify({
+          source: state.selectedSource,
+          destination: state.selectedDestination,
+        }),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Something went wrong');
+        throw new Error(data.message || "Something went wrong");
       }
-      
+
       const result = data.paths as string[][];
 
       // Using Set to store unique URLs
       const uniquePaths = new Set<string>();
-      result.forEach(path => path.forEach(url => uniquePaths.add(url)));
+      result.forEach((path) => path.forEach((url) => uniquePaths.add(url)));
 
       // Using object for the final result with URL as key
       const resultWithInfo: Record<string, PathInfo[]> = {};
@@ -89,26 +98,31 @@ export default function Home() {
           }
         }
       }
-      const filteredResult = Object.values(resultWithInfo).filter((path) => path.length > 0);
+      const filteredResult = Object.values(resultWithInfo).filter(
+        (path) => path.length > 0
+      );
       dispatch({ type: "SET_RESULT", payload: filteredResult });
-
     } catch (err) {
       console.error(err);
-      const errMsg = err instanceof Error ? err.message : 'Something went wrong';
+      const errMsg =
+        err instanceof Error ? err.message : "Something went wrong";
       toast.error(errMsg);
-    }
-    finally {
+    } finally {
       toast.dismiss(loading);
     }
-
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24 w-full">
-      <InputQuery /> 
+    <main className="flex min-h-screen flex-col items-center px-24 py-12 w-full bg-[#14213d] gap-10">
+      <Hero />
+      <InputQuery />
       <form onSubmit={onSubmit} className="flex flex-col items-center">
-        <button type="submit" className="btn btn-primary mt-4">Find Path</button>
+        <button type="submit" className="btn btn-primary mt-4">
+          Find Path
+        </button>
       </form>
+      {/* <SearchButton /> */}
+      <CardGrid />
     </main>
   );
 }
