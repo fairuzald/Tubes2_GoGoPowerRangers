@@ -2,7 +2,9 @@ import Image from "next/legacy/image";
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Button } from "./button";
+import { Button } from "./ui/button";
+import { DrawerAbout } from "@/components/about";
+import { DrawerAuthors } from "@/components/authors";
 
 interface PathItem {
   name: string;
@@ -15,19 +17,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ expandNavbar, setExpandNavbar }) => {
-  const pathname = usePathname();
-  const [navClass, setNavClass] = useState("");
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-
   const blackBgRef = useRef<HTMLDivElement>(null);
-  const path: PathItem[] = [
-    { name: "About", url: "/About" },
-    { name: "Authors", url: "/Authors" },
-    {
-      name: "GitHub",
-      url: "https://github.com/fairuzald/Tubes2_NamaKelompok",
-    },
-  ];
 
   return (
     <nav className="sticky bg-[#14213d] left-0 right-0 top-0 flex justify-between items-center z-30 w-full py-3 px-7 lg:px-10 xl:px-16 2xl:px-10">
@@ -36,17 +26,20 @@ const Navbar: React.FC<NavbarProps> = ({ expandNavbar, setExpandNavbar }) => {
           expandNavbar ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {path.map((item) => {
-          return (
-            <Link key={item.name} href={item.url}>
-              <li
-                className={`cursor-pointer hover:font-bold shadow-none hover:shadow-lg`}
-              >
-                {item.name}
-              </li>
-            </Link>
-          );
-        })}
+        <DrawerAbout />
+        <DrawerAuthors />
+
+        <Button
+          variant="link"
+          className="text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0"
+        >
+          <Link
+            key="GitHub"
+            href="https://github.com/fairuzald/Tubes2_GoGoPowerRangers"
+          >
+            GitHub
+          </Link>
+        </Button>
       </ul>
 
       {expandNavbar && (

@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import InputQuery from "@/components/input-query";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 // import { QueryProvider } from '@/context/QueryProvider'; // Make sure to create this context provider
 
 export default function Home() {
