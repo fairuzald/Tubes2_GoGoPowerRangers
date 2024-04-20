@@ -34,7 +34,7 @@ const cards: CardData[] = [
 const Card: React.FC<{ data: CardData }> = ({ data }) => {
   return (
     <div
-      className={`container flex flex-row items-center rounded overflow-hidden shadow-lg bg-white hover:bg-gray-400 hover:cursor-pointer hover:shadow-2xl transition-shadow duration-200 ${data.borderColor}`}
+      className={`container flex flex-row items-center rounded overflow-hidden shadow-lg bg-white hover:bg-gray-200 hover:cursor-pointer hover:shadow-2xl transition-shadow duration-200 ${data.borderColor}`}
     >
       <div>
         {/* Adjust the height as needed */}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { DrawerAbout } from "@/components/about";
-import { DrawerAuthors } from "@/components/authors";
+import { Authors } from "@/components/authors";
 import React, { useRef, useState } from "react";
 
 interface PathItem {
@@ -29,8 +29,8 @@ const Navbar: React.FC<NavbarProps> = ({ expandNavbar, setExpandNavbar }) => {
           }`}
         >
           <DrawerAbout />
-          <DrawerAuthors />
-
+          <Authors />
+ 
           <Button
             variant="link"
             className="text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0"

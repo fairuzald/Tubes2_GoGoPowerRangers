@@ -1,138 +1,88 @@
 import * as React from "react";
 import { Minus, Plus } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  DrawerFooter,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
-const data = [
+type AuthorData = {
+  name: string;
+  nim: string;
+  imageSrc: string;
+  role: string;
+};
+
+const authors: AuthorData[] = [
   {
-    goal: 400,
+    name: "Amalia Putri",
+    nim: "13522042",
+    imageSrc: "/amel.jpg",
+    role: "The Frontend Developer & Graph Visualizer",
   },
   {
-    goal: 300,
+    name: "Moh Fairuz Alauddin Yahya",
+    nim: "13522057",
+    imageSrc: "/sample.jpg",
+    role: "The Backend Developer & BFS Handler",
   },
   {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
+    name: "Julian Chandra Sutadi",
+    nim: "13522080",
+    imageSrc: "/julian.jpg",
+    role: "The Algorithm Guy & IDS Handler",
   },
 ];
 
-export function DrawerAuthors() {
-  const [goal, setGoal] = React.useState(350);
-
-  function onClick(adjustment: number) {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
-  }
-
+export function Authors() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Button
           variant="link"
-          className={`text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0`}
+          className="text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0"
         >
           Authors
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-          </DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-                onClick={() => onClick(-10)}
-                disabled={goal <= 200}
-              >
-                <Minus className="h-4 w-4" />
-                <span className="sr-only">Decrease</span>
-              </Button>
-              <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">
-                  {goal}
-                </div>
-                <div className="text-[0.70rem] uppercase text-muted-foreground">
-                  Calories/day
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-                onClick={() => onClick(10)}
-                disabled={goal >= 400}
-              >
-                <Plus className="h-4 w-4" />
-                <span className="sr-only">Increase</span>
-              </Button>
+      <DrawerContent className="fixed inset-x-0 bottom-0 z-50 mt-24 py-5 h-auto grid grid-rows-2 rounded-t-[10px] bg-yellow-primary">
+        <div className="grid grid-cols-3 row-span-full col-span-full">
+          {/* This grid is for your second row */}
+          {authors.map((author) => (
+            <div
+              key={author.nim}
+              className="flex flex-col items-center justify-center p-4 gap-2"
+            >
+              {/* Include Image component for author's image */}
+              <Image
+                src={author.imageSrc}
+                alt={author.name}
+                className="w-24 h-24 rounded-full"
+                width={100}
+                height={100}
+              />
+              <p className="text-xl font-bold">
+                {author.name} {`(` + author.nim + `)`}
+              </p>
+              <p className="text-lg font-semibold text-gray-500">
+                {author.role}
+              </p>
             </div>
-            <div className="mt-3 h-[120px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
-                  {/* <Bar
-                    dataKey="goal"
-                    style={
-                      {
-                        fill: "#8884d8",
-                        opacity: 0.9,
-                      } as React.CSSProperties
-                    }
-                  /> */}
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
+          ))}
         </div>
+        <DrawerClose asChild>
+          <Button variant="outline" className="text-lg">
+            Back
+          </Button>
+        </DrawerClose>
       </DrawerContent>
     </Drawer>
   );
