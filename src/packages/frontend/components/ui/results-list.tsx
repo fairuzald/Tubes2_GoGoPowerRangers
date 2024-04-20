@@ -14,7 +14,7 @@ import {
   ResultsListOtherPathsText,
 } from "./results-styles";
 
-import defaultPageThumbnail from "../images/defaultPageThumbnail.png";
+import defaultPageThumbnail from "../../public/defaultPageThumbnail.png";
 
 interface Page {
   description?: string;
@@ -62,7 +62,13 @@ const ResultListItem: React.FC<ResultListItemProps> = ({ pages }) => {
           alt={title}
           width={60}
           height={60}
-          style={{ marginRight: "12px", borderRadius: "8px", border: "solid 1px #0b6e4f", backgroundColor: "#d1d5db", objectFit: "cover" }}
+          style={{
+            marginRight: "12px",
+            borderRadius: "8px",
+            border: "solid 1px #0b6e4f",
+            backgroundColor: "#d1d5db",
+            objectFit: "cover",
+          }}
         />
         <PageInnerWrapper>
           <PageTitle>{title}</PageTitle>

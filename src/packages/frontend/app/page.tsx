@@ -4,6 +4,7 @@ import CardGrid from "@/components/individual-paths";
 import InputQuery from "@/components/input-query";
 import { useQueryContext } from "@/components/query-provider";
 import type { PathInfo } from "@/types/result";
+// import Results from "@/components/results";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -149,6 +150,8 @@ export default function Home() {
           {loading ? "Loading..." : "Go!"}
         </Button>
         <CardGrid />
+
+        {/* <Results/> */}
       </div>
     </main>
   );
