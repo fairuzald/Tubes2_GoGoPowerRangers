@@ -14,19 +14,19 @@ const cards: CardData[] = [
   {
     name: "Card 1",
     description: "This is the first card",
-    imageSrc: "/wikirace.png",
+    imageSrc: "/sample.jpg",
     borderColor: "border-red-500",
   },
   {
     name: "Card 2",
     description: "This is the second card",
-    imageSrc: "/wikirace.png",
+    imageSrc: "/sample.jpg",
     borderColor: "border-red-500",
   },
   {
     name: "Card 3",
     description: "This is the third card",
-    imageSrc: "/wikirace.png",
+    imageSrc: "/sample.jpg",
     borderColor: "border-red-500",
   },
 ];
@@ -34,20 +34,20 @@ const cards: CardData[] = [
 const Card: React.FC<{ data: CardData }> = ({ data }) => {
   return (
     <div
-      className={`flex flex-row items-center max-w-sm rounded overflow-hidden shadow-lg bg-white hover:shadow-2xl transition-shadow duration-200 ${data.borderColor}`}
+      className={`container flex flex-row items-center rounded overflow-hidden shadow-lg bg-white hover:bg-gray-400 hover:cursor-pointer hover:shadow-2xl transition-shadow duration-200 ${data.borderColor}`}
     >
-      <div className="h-full w-full">
+      <div>
         {/* Adjust the height as needed */}
         <Image
           src={data.imageSrc}
           alt={`Picture of ${data.name}`}
           objectFit="cover"
-          className="rounded-t-lg"
-          width={300}
-          height={100}
+          className="rounded-l"
+          width={80}
+          height={80}
         />
       </div>
-      <div className="">
+      <div className="px-5">
         <div className="font-bold text-xl mb-2 text-black">{data.name}</div>
         <p className="text-gray-700 text-base">{data.description}</p>
       </div>
