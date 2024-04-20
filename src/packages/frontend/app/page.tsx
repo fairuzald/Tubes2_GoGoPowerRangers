@@ -50,7 +50,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async () => {
-
     // Validation check
     if (!state.selectedSource || !state.selectedDestination) {
       toast.error("Please select source and destination from the select input");
@@ -104,7 +103,8 @@ export default function Home() {
       dispatch({ type: "SET_RESULT", payload: filteredResult });
     } catch (err) {
       console.error(err);
-      const errMsg = err instanceof Error ? err.message : "Something went wrong";
+      const errMsg =
+        err instanceof Error ? err.message : "Something went wrong";
       toast.error(errMsg);
     } finally {
       toast.dismiss(loadingToast);
@@ -142,7 +142,7 @@ export default function Home() {
         {/* Submit button */}
         <Button
           size={"lg"}
-          className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 duration-300"
+          className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
           onClick={onSubmit}
           disabled={loading}
         >
