@@ -1,18 +1,18 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import CardGrid from "@/components/individual-paths";
 import InputQuery from "@/components/input-query";
 import { useQueryContext } from "@/components/query-provider";
 import type { PathInfo } from "@/types/result";
-import React from "react"; // Added import for React
+import Image from "next/image";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import Hero from "@/components/hero";
-import SearchButton from "@/components/search-button";
-import CardGrid from "@/components/individual-paths";
 
 // Cache to store URL info results
 const infoCache = new Map<string, PathInfo>();
 
 const fetchInfoUrl = async (url: string) => {
-  if (!url) throw new Error("No url provided");
+  if (!url) throw new Error("No URL provided");
 
   // Check cache before making a request to the server
   if (infoCache.has(url)) {
@@ -34,31 +34,30 @@ const fetchInfoUrl = async (url: string) => {
     }
 
     const info = data.data;
-    infoCache.set(url, info); // Store info in cache
+    infoCache.set(url, info);
 
     return info;
   } catch (err) {
     console.error(err);
     const errMsg = err instanceof Error ? err.message : "Something went wrong";
     toast.error(errMsg);
+    throw err; // Rethrow the error to propagate it further if needed
   }
 };
 
 export default function Home() {
   const { state, dispatch } = useQueryContext();
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async () => {
+
     // Validation check
-    if (!state.selectedSource || !state.selectedDestination)
-      return toast.error(
-        "Please select source and destination from select input"
-      );
-
-    // Binding loading toast to a variable
-    const loading = toast.loading("Finding path...");
-
-    // Fetching data from the server
+    if (!state.selectedSource || !state.selectedDestination) {
+      toast.error("Please select source and destination from the select input");
+      return;
+    }
+    setLoading(true);
+    const loadingToast = toast.loading("Finding path...");
     try {
       const url = state.method === "ids" ? "/api/ids" : "/api/bfs";
       const response = await fetch(url, {
@@ -98,31 +97,59 @@ export default function Home() {
           }
         }
       }
+
       const filteredResult = Object.values(resultWithInfo).filter(
         (path) => path.length > 0
       );
       dispatch({ type: "SET_RESULT", payload: filteredResult });
     } catch (err) {
       console.error(err);
-      const errMsg =
-        err instanceof Error ? err.message : "Something went wrong";
+      const errMsg = err instanceof Error ? err.message : "Something went wrong";
       toast.error(errMsg);
     } finally {
-      toast.dismiss(loading);
+      toast.dismiss(loadingToast);
+      setLoading(false); // Reset loading state after fetching data
     }
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-24 py-12 w-full bg-[#14213d] gap-10">
-      <Hero />
-      <InputQuery />
-      <form onSubmit={onSubmit} className="flex flex-col items-center">
-        <button type="submit" className="btn btn-primary mt-4">
-          Find Path
-        </button>
-      </form>
-      {/* <SearchButton /> */}
-      <CardGrid />
+    <main className="flex min-h-screen flex-col items-center px-24 py-14 w-full bg-[#141414] relative z-10">
+      {/* Video background */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover -z-10"
+        autoPlay
+        loop
+        muted
+      >
+        <source src={"bg1.mp4"} type="video/mp4" />
+      </video>
+      <div className="mt-4 flex flex-col gap-10 items-center justify-center">
+        {/* Main title section */}
+        <section className="container mx-auto">
+          <Image
+            src="/wikirace.png"
+            alt="logo wikirace"
+            width={400}
+            height={200}
+            className="mx-auto"
+          />
+          <h1 className="text-center text-3xl font-bold mt-6">
+            Find the shortest paths from
+          </h1>
+        </section>
+        {/* Input Query */}
+        <InputQuery />
+        {/* Submit button */}
+        <Button
+          size={"lg"}
+          className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 duration-300"
+          onClick={onSubmit}
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Go!"}
+        </Button>
+        <CardGrid />
+      </div>
     </main>
   );
 }

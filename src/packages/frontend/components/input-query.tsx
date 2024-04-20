@@ -24,27 +24,33 @@ export default function InputQuery() {
   return (
     <div className="flex gap-7 w-full max-w-[1300px]">
       {/* AutoCompleteInput for source */}
-      <AutoCompleteInput
-        data={sourceData}
-        type="text"
-        placeholder="Source...."
-        value={source}
-        onChange={(e) => dispatch({ type: "SET_SOURCE", payload: e.target.value })}
-        onSelectValue={(url) => dispatch({ type: "SET_SELECTED_SOURCE", payload: url })}
-      />
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-white text-center">From</h2>
+        <AutoCompleteInput
+          data={sourceData}
+          type="text"
+          placeholder="Source...."
+          value={source}
+          onChange={(e) => dispatch({ type: "SET_SOURCE", payload: e.target.value })}
+          onSelectValue={(url) => dispatch({ type: "SET_SELECTED_SOURCE", payload: url })}
+        />
+      </div>
       {/* Button to trigger swap */}
-      <button onClick={onSwap} className="w-fit h-fit mt-2">
+      <button onClick={onSwap} className="w-fit h-fit mt-12">
         <MoveHorizontal className="text-white" size={40} />
       </button>
       {/* AutoCompleteInput for destination */}
-      <AutoCompleteInput
-        data={destinationData}
-        type="text"
-        placeholder="Destination...."
-        value={destination}
-        onChange={(e) => dispatch({ type: "SET_DESTINATION", payload: e.target.value })}
-        onSelectValue={(url) => dispatch({ type: "SET_SELECTED_DESTINATION", payload: url })}
-      />
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-white text-center">To</h2>
+        <AutoCompleteInput
+          data={destinationData}
+          type="text"
+          placeholder="Destination...."
+          value={destination}
+          onChange={(e) => dispatch({ type: "SET_DESTINATION", payload: e.target.value })}
+          onSelectValue={(url) => dispatch({ type: "SET_SELECTED_DESTINATION", payload: url })}
+        />
+      </div>
     </div>
   );
 }

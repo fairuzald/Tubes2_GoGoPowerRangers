@@ -1,5 +1,5 @@
-import React from "react";
 import Image from "next/image";
+import React from "react";
 
 // Define a type for the card data
 type CardData = {
@@ -36,7 +36,7 @@ const Card: React.FC<{ data: CardData }> = ({ data }) => {
     <div
       className={`flex flex-row items-center max-w-sm rounded overflow-hidden shadow-lg bg-white hover:shadow-2xl transition-shadow duration-200 ${data.borderColor}`}
     >
-      <div className="relative h-full w-full">
+      <div className="h-full w-full">
         {/* Adjust the height as needed */}
         <Image
           src={data.imageSrc}
