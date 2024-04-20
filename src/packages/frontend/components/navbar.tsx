@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ expandNavbar, setExpandNavbar }) => {
         >
           <DrawerAbout />
           <Authors />
-
+ 
           <Button
             variant="link"
             className="text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0"
