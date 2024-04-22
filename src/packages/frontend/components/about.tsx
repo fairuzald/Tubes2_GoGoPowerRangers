@@ -1,7 +1,5 @@
 import * as React from "react";
-import { Minus, Plus } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
-
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -13,48 +11,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-
-const data = [
-  {
-    goal: 400,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
-  },
-];
+import InteractiveImage from "@/components/ui/interactive-image";
 
 export function DrawerAbout() {
   const [goal, setGoal] = React.useState(350);
@@ -74,62 +31,29 @@ export function DrawerAbout() {
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-full">
           <DrawerHeader>
-            <DrawerTitle>Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+            <DrawerTitle>
+              Pemanfaatan Algoritma IDS dan BFS dalam Permainan WikiRace
+            </DrawerTitle>
+            <div className="flex flex-row my-4">
+              <InteractiveImage />
+              <DrawerDescription>
+                WikiRace atau Wiki Game adalah permainan yang melibatkan
+                Wikipedia, sebuah ensiklopedia daring gratis yang dikelola oleh
+                berbagai relawan di dunia, dimana pemain mulai pada suatu
+                artikel Wikipedia dan harus menelusuri artikel-artikel lain pada
+                Wikipedia (dengan mengeklik tautan di dalam setiap artikel)
+                untuk menuju suatu artikel lain yang telah ditentukan sebelumnya
+                dalam waktu paling singkat atau klik (artikel) paling sedikit.{" "}
+              </DrawerDescription>
+            </div>
           </DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-                onClick={() => onClick(-10)}
-                disabled={goal <= 200}
-              >
-                <Minus className="h-4 w-4" />
-                <span className="sr-only">Decrease</span>
-              </Button>
-              <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">
-                  {goal}
-                </div>
-                <div className="text-[0.70rem] uppercase text-muted-foreground">
-                  Calories/day
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-                onClick={() => onClick(10)}
-                disabled={goal >= 400}
-              >
-                <Plus className="h-4 w-4" />
-                <span className="sr-only">Increase</span>
-              </Button>
-            </div>
-            <div className="mt-3 h-[120px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
-                  {/* <Bar
-                    dataKey="goal"
-                    style={
-                      {
-                        fill: "#8884d8",
-                        opacity: 0.9,
-                      } as React.CSSProperties
-                    }
-                  /> */}
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
           <DrawerFooter>
-            <Button>Submit</Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="text-lg">
+                Back
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </div>
