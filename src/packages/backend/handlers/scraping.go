@@ -15,8 +15,14 @@ import (
 func ScrapeLink(url string, wg *sync.WaitGroup, linkCh chan<- string, visitedLinks map[string]bool) error {
 	defer wg.Done()
 
+	// Create a transport with proxy settings if needed
+	transport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	}
+
 	client := &http.Client{
-		Timeout: time.Second * 10, // Set a timeout of 10 seconds
+		Timeout:   time.Second * 10,
+		Transport: transport,
 	}
 
 	res, err := client.Get(url)
@@ -26,6 +32,58 @@ func ScrapeLink(url string, wg *sync.WaitGroup, linkCh chan<- string, visitedLin
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("status code error: %d %s", res.StatusCode, res.Status)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return fmt.Errorf("failed to parse HTML document: %w", err)
+	}
+
+	doc.Find("a[href^='/wiki/']").Each(func(i int, s *goquery.Selection) {
+		link, exists := s.Attr("href")
+		if exists && !strings.Contains(link, ":") && !visitedLinks[link] {
+			linkCh <- "https://en.wikipedia.org" + link
+			visitedLinks[link] = true
+		}
+	})
+
+	return nil
+}
+
+func ScrapeLinkWithRetry(url string, wg *sync.WaitGroup, linkCh chan<- string, visitedLinks map[string]bool) error {
+	defer wg.Done()
+
+	transport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	}
+
+	client := &http.Client{
+		Timeout:   time.Second * 10,
+		Transport: transport,
+	}
+
+	retries := 3           // Number of retries
+	var res *http.Response // Declare res outside the loop
+
+	for i := 0; i < retries; i++ {
+		var err error // Declare err inside the loop
+		res, err = client.Get(url)
+		if err != nil {
+			return fmt.Errorf("failed to request URL: %w", err)
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode == http.StatusOK {
+			break // Successful request, exit retry loop
+		}
+
+		if res.StatusCode == http.StatusTooManyRequests {
+			// Wait before retrying
+			time.Sleep(time.Second * 5)
+			continue // Retry the request
+		}
+
 		return fmt.Errorf("status code error: %d %s", res.StatusCode, res.Status)
 	}
 
@@ -55,7 +113,7 @@ func ScrapeLinksSync(url string) ([]string, error) {
 	go func() {
 		defer close(linkCh)
 		defer wg.Wait()
-		err := ScrapeLink(url, &wg, linkCh, visitedLinks)
+		err := ScrapeLinkWithRetry(url, &wg, linkCh, visitedLinks)
 		if err != nil {
 			fmt.Println("Error scraping links:", err)
 		}

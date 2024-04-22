@@ -21,9 +21,16 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
+	// Semaphore to limit the number of concurrent goroutines
+	var sema = make(chan struct{}, 200)
 
 	// Iteration to get
 	for len(queue) > 0 {
+		// Check if maxDepth is set and the current depth is greater than maxDepth
+		if maxDepth > 0 && len(queue[0]) > maxDepth {
+			break
+		}
+
 		queueSameDepth := [][]string{}
 
 		for len(queue) > 0 {
@@ -31,9 +38,12 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 			queue = queue[1:]
 		}
 
+		fmt.Println("Depth", len(queueSameDepth[0])-1)
+
 		for _, path := range queueSameDepth {
 			currentNode := path[len(path)-1]
 
+			// Check if the current node is the destination
 			if currentNode == destination {
 				found = true
 				mutex.Lock()
@@ -41,15 +51,20 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 				mutex.Unlock()
 			} else if !found {
 				wg.Add(1)
+				// Acquire token semaphore
+				sema <- struct{}{}
 				go func(currentNode string, path []string) {
 					defer wg.Done()
-					links, err := ScrapeLinksSync(currentNode)
+					// Release token semaphore
+					defer func() { <-sema }()
+
+					// Get links from the current node
+					links, err := ScrapperHandlerLinkBuffer(currentNode)
 
 					if err != nil {
 						// Handle error
 						fmt.Print(err)
 						return // Return to avoid deadlock
-
 					}
 
 					mutex.Lock()
