@@ -1,6 +1,4 @@
 import * as React from "react";
-import { Minus, Plus } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -59,7 +57,7 @@ export function Authors() {
           {authors.map((author) => (
             <div
               key={author.nim}
-              className="flex flex-col items-center justify-center p-4 gap-2"
+              className="flex flex-col items-center justify-center p-4 gap-3"
             >
               {/* Include Image component for author's image */}
               <Image
