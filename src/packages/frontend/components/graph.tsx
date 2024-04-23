@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
 import {
-  GraphNode,
-  GraphLink,
-  defineGraphConfig,
   defineGraph,
+  defineGraphConfig,
   defineLink,
   defineNode,
   GraphController,
+  GraphLink,
+  GraphNode
 } from "d3-graph-controller";
 import "d3-graph-controller/default.css";
+import React, { useEffect, useRef, useState } from "react";
+import { GraphLinks, useQueryContext } from "./query-provider";
 
 export type CustomType = "primary" | "secondary";
 
@@ -36,51 +37,57 @@ const config = defineGraphConfig<CustomType, CustomNode, CustomLink>({
   },
 });
 
-const a = defineNode<CustomType, CustomNode>({
-  id: "a",
-  type: "primary",
-  isFocused: false,
-  color: "green",
-  label: {
-    color: "black",
-    fontSize: "1rem",
-    text: "A",
-  },
-  radius: 64,
-});
-
-const b = defineNode<CustomType, CustomNode>({
-  id: "b",
-  type: "secondary",
-  isFocused: false,
-  color: "blue",
-  label: {
-    color: "black",
-    fontSize: "1rem",
-    text: "B",
-  },
-  radius: 32,
-});
-
-const aToB = defineLink<CustomType, CustomNode, CustomNode, CustomLink>({
-  source: a,
-  target: b,
-  color: "red",
-  label: {
-    color: "black",
-    fontSize: "1rem",
-    text: "128",
-  },
-  length: 128,
-});
-
-const graph = defineGraph<CustomType, CustomNode, CustomLink>({
-  nodes: [a, b],
-  links: [aToB],
-});
-
 const ForceGraph: React.FC = () => {
   const graphWrapperRef = useRef<HTMLDivElement>(null);
+
+  const { state } = useQueryContext();
+
+  let nodes: Record<string, CustomNode> = {};
+
+  state.nodes.forEach((nodeId) => {
+    const nodeGraph = defineNode<CustomType, CustomNode>({
+      id: nodeId,
+      type: "primary",
+      isFocused: false,
+      color: "green",
+      label: {
+        color: "black",
+        fontSize: "1rem",
+        text: nodeId,
+      },
+      radius: 20,
+    });
+
+    nodes[nodeId] = nodeGraph;
+  });
+
+  let linkNodes: CustomLink[] = [];
+  Object.values(state.linkNodes).forEach((link: GraphLinks) => {
+    const { source, targets } = link;
+    targets.forEach((dest) => {
+      if (nodes[source] && nodes[dest]) {
+        const link = defineLink<CustomType, CustomNode, CustomNode, CustomLink>({
+          source: nodes[source],
+          target: nodes[dest],
+          color: "red",
+          label: {
+            color: "black",
+            fontSize: "1rem",
+            text: "128",
+          },
+          length: 700,
+        });
+
+        linkNodes.push(link);
+      }
+    });
+  });
+
+  const graph = defineGraph<CustomType, CustomNode, CustomLink>({
+    nodes: Object.values(nodes),
+    links: linkNodes,
+  });
+
   const [controller, setController] = useState<GraphController<
     CustomType,
     CustomNode,
@@ -88,7 +95,7 @@ const ForceGraph: React.FC = () => {
   > | null>(null);
 
   useEffect(() => {
-    if (graphWrapperRef.current) {
+    if (graphWrapperRef.current && graph) {
       const newController = new GraphController(
         graphWrapperRef.current,
         graph,
@@ -96,7 +103,7 @@ const ForceGraph: React.FC = () => {
       );
       setController(newController);
     }
-  }, []);
+  }, [graph]);
 
   return (
     <div

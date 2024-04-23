@@ -56,7 +56,7 @@ const SwitchAPIReq = () => {
     setLoading(true);
     const loadingToast = toast.loading("Finding path...");
     try {
-      const url = !state.isBFS? "/api/ids" : "/api/bfs";
+      const url = !state.isBFS ? "/api/ids" : "/api/bfs";
       const response = await fetch(url, {
         cache: "no-cache",
         headers: {
@@ -82,7 +82,7 @@ const SwitchAPIReq = () => {
 
       // Using object for the final result with URL as key
       const uniquePathsWithInfo: Record<string, PathInfo> = {};
-      
+
       // Fetch info for each unique URL
       for (const url of uniquePaths) {
         const info = await fetchInfoUrl(url);
@@ -92,18 +92,30 @@ const SwitchAPIReq = () => {
       }
 
 
-      // Map the result with the info
+      let dictionary: { [key: string]: { source: string; targets: Set<string> } } = {};
+
+      // Map the result with the info using linkNodes
       let resultsWithInfo = [];
-      for (const path of result) {
+      for (let i = 0; i < result.length; i++) {
         let arr = [];
-        for (const url of path) {
-          arr.push(uniquePathsWithInfo[url]);
+        for (let j = 0; j < result[i].length; j++) {
+          const url = result[i][j];
+          const info = uniquePathsWithInfo[url];
+          arr.push(info);
+
+          // Update dictionary with index information
+          if (!dictionary[url]) {
+            dictionary[url] = { source: url, targets: new Set<string>() };
+          }
+          dictionary[url].targets.add(result[i][j + 1] || "");
         }
         resultsWithInfo.push(arr);
       }
 
 
       dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
+      dispatch({ type: "SET_NODES", payload: new Set(uniquePaths) });
+      dispatch({ type: "SET_LINK_NODES", payload: dictionary });
     } catch (err) {
       console.error(err);
       const errMsg =
