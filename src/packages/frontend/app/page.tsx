@@ -1,16 +1,11 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import CardGrid from "@/components/individual-paths";
+import CardGridResult from "@/components/individual-paths";
 import InputQuery from "@/components/input-query";
-import { useQueryContext } from "@/components/query-provider";
-import type { PathInfo } from "@/types/result";
+import SwitchAPIReq from "@/components/switch-api-req";
+import { Metadata } from "next";
 import Image from "next/image";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import SwitchOption from "@/components/switch-option";
-// import Graph from "@/components/graph";
 import ForceGraph from "@/components/graph";
-
 
 export default function Home() {
   return (
@@ -24,7 +19,7 @@ export default function Home() {
       >
         <source src={"bg1.mp4"} type="video/mp4" />
       </video>
-      <div className="mt-4 flex flex-col gap-10 items-center justify-center">
+      <div className="mt-4 flex flex-col gap-10 items-center justify-center w-full">
         {/* Main title section */}
         <section className="container mx-auto">
           <Image
@@ -33,30 +28,34 @@ export default function Home() {
             width={400}
             height={200}
             className="mx-auto"
+            priority
           />
           <h1 className="text-center text-3xl font-bold mt-6">
             Find the shortest paths from
           </h1>
         </section>
+
         {/* Input Query */}
         <InputQuery />
+
         {/* Submit button */}
         <SwitchOption/>
-        
-        {/* <Button
-          size={"lg"}
-          className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
-          onClick={onSubmit}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Go!"}
-        </Button> */}
         <CardGrid />
         <ForceGraph/>
-        {/* <Graph/> */}
+        <SwitchAPIReq />
 
-        {/* <Results/> */}
+        {/* Grid Result Card */}
+        <CardGridResult />
       </div>
     </main>
   );
 }
+
+export const metadata: Metadata = {
+  title: "Wikirace | Go Go Power Rangers!",
+  description: "Find the shortest paths from source to destination on Wikipedia using BFS and IDS algorithms.",
+  generator: "Next.js",
+  keywords: ["wikirace", "wikipedia", "bfs", "ids", "shortest path"],
+  applicationName: "Wikirace",
+  category: "Game",
+};

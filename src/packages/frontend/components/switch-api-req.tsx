@@ -1,10 +1,9 @@
 "use client";
-import React from "react";
-import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useQueryContext } from "@/components/query-provider";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import type { PathInfo } from "@/types/result";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 // Cache to store URL info results
@@ -44,10 +43,9 @@ const fetchInfoUrl = async (url: string) => {
   }
 };
 
-const SwitchOption = () => {
+const SwitchAPIReq = () => {
   const { state, dispatch } = useQueryContext();
   const [loading, setLoading] = useState(false);
-  const [isChecked, setChecked] = useState(false);
 
   const onSubmit = async () => {
     // Validation check
@@ -58,7 +56,7 @@ const SwitchOption = () => {
     setLoading(true);
     const loadingToast = toast.loading("Finding path...");
     try {
-      const url = state.method === "ids" ? "/api/ids" : "/api/bfs";
+      const url = !state.isBFS? "/api/ids" : "/api/bfs";
       const response = await fetch(url, {
         cache: "no-cache",
         headers: {
@@ -83,24 +81,29 @@ const SwitchOption = () => {
       result.forEach((path) => path.forEach((url) => uniquePaths.add(url)));
 
       // Using object for the final result with URL as key
-      const resultWithInfo: Record<string, PathInfo[]> = {};
-
-      // Mapping over the result to fetch info for each URL
-      for (const path of result) {
-        for (const url of path) {
-          if (!resultWithInfo[url]) {
-            const pathInfo = await fetchInfoUrl(url);
-            if (pathInfo) {
-              resultWithInfo[url] = [pathInfo];
-            }
-          }
+      const uniquePathsWithInfo: Record<string, PathInfo> = {};
+      
+      // Fetch info for each unique URL
+      for (const url of uniquePaths) {
+        const info = await fetchInfoUrl(url);
+        if (info) {
+          uniquePathsWithInfo[url] = info;
         }
       }
 
-      const filteredResult = Object.values(resultWithInfo).filter(
-        (path) => path.length > 0
-      );
-      dispatch({ type: "SET_RESULT", payload: filteredResult });
+
+      // Map the result with the info
+      let resultsWithInfo = [];
+      for (const path of result) {
+        let arr = [];
+        for (const url of path) {
+          arr.push(uniquePathsWithInfo[url]);
+        }
+        resultsWithInfo.push(arr);
+      }
+
+
+      dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
     } catch (err) {
       console.error(err);
       const errMsg =
@@ -112,18 +115,14 @@ const SwitchOption = () => {
     }
   };
 
-  const handleSwitchChange = () => {
-    setChecked((prev) => !prev);
-  };
-
   return (
-    <div className="flex flex-col gap-5">
+    <section className="flex flex-col gap-5">
       <div className="flex items-center justify-center gap-4">
         <span className="font-montserrat text-[21px] font-semibold">IDS</span>
         <Switch
           className="bg-white"
-          checked={isChecked}
-          onCheckedChange={handleSwitchChange}
+          checked={state.isBFS}
+          onCheckedChange={(checked) => dispatch({ type: "SET_ISBFS", payload: checked })}
         />
         <span className="font-montserrat text-[21px] font-semibold">
           BFS
@@ -139,8 +138,8 @@ const SwitchOption = () => {
       >
         {loading ? "Loading..." : "Go!"}
       </Button>
-    </div>
+    </section>
   );
 };
 
-export default SwitchOption;
+export default SwitchAPIReq;
