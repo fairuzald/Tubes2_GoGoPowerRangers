@@ -8,6 +8,8 @@ import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import SwitchOption from "@/components/switch-option";
+// import Graph from "@/components/graph";
+import ForceGraph from "@/components/graph";
 
 
 export default function Home() {
@@ -50,6 +52,8 @@ export default function Home() {
           {loading ? "Loading..." : "Go!"}
         </Button> */}
         <CardGrid />
+        <ForceGraph/>
+        {/* <Graph/> */}
 
         {/* <Results/> */}
       </div>
