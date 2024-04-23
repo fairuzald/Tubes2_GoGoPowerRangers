@@ -3,7 +3,7 @@ import { cn } from '@/libs/utils';
 import { AutoCompleteData } from '@/types/autocomplete';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { Input, InputProps } from './input';
+import { Input, InputProps } from './ui/input';
 
 interface AutoCompleteInputProps extends InputProps {
     data: AutoCompleteData[];
@@ -73,7 +73,7 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({ data, onSelectVal
             {isOpen && data && data.length>0&& (
                 <ul
                     ref={dropdownRef}
-                    className="rounded-lg absolute top-16 bg-white text-black max-h-[600px] custom-scrollbar overflow-y-auto overflow-x-hidden w-full"
+                    className="rounded-lg absolute top-16 bg-white text-black max-h-[500px] custom-scrollbar overflow-y-auto overflow-x-hidden w-full"
                     role="listbox"
                     aria-labelledby="autocomplete-input"
                 >

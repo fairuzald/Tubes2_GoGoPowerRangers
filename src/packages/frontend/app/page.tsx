@@ -1,10 +1,9 @@
-"use client";
-import CardGrid from "@/components/individual-paths";
-import InputQuery from "@/components/input-query";
-import Image from "next/image";
-import SwitchOption from "@/components/switch-option";
 import ForceGraph from "@/components/graph";
-
+import CardGridResult from "@/components/individual-paths";
+import InputQuery from "@/components/input-query";
+import SwitchAPIReq from "@/components/switch-api-req";
+import { Metadata } from "next";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -18,7 +17,7 @@ export default function Home() {
       >
         <source src={"bg1.mp4"} type="video/mp4" />
       </video>
-      <div className="mt-4 flex flex-col gap-10 items-center justify-center">
+      <div className="mt-4 flex flex-col gap-10 items-center justify-center w-full">
         {/* Main title section */}
         <section className="container mx-auto">
           <Image
@@ -27,18 +26,34 @@ export default function Home() {
             width={400}
             height={200}
             className="mx-auto"
+            priority
           />
           <h1 className="text-center text-3xl font-bold mt-6">
             Find the shortest paths from
           </h1>
         </section>
+
         {/* Input Query */}
         <InputQuery />
-        {/* Submit button */}
-        <SwitchOption/>
+        
+        {/* Bonus: Graph Visualization */}
         <ForceGraph/>
-        <CardGrid />
+
+        {/* Submit button */}
+        <SwitchAPIReq />
+
+        {/* Grid Result Card */}
+        <CardGridResult />
       </div>
     </main>
   );
 }
+
+export const metadata: Metadata = {
+  title: "Wikirace | Go Go Power Rangers!",
+  description: "Find the shortest paths from source to destination on Wikipedia using BFS and IDS algorithms.",
+  generator: "Next.js",
+  keywords: ["wikirace", "wikipedia", "bfs", "ids", "shortest path"],
+  applicationName: "Wikirace",
+  category: "Game",
+};

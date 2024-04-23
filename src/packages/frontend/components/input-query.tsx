@@ -22,7 +22,7 @@ export default function InputQuery() {
   };
 
   return (
-    <div className="flex gap-7 w-full max-w-[1300px]">
+    <section className="flex gap-7 w-full max-w-[1500px] items-center justify-center">
       {/* AutoCompleteInput for source */}
       <div className="space-y-3">
         <h2 className="text-xl font-semibold text-white text-center">From</h2>
@@ -51,6 +51,6 @@ export default function InputQuery() {
           onSelectValue={(url) => dispatch({ type: "SET_SELECTED_DESTINATION", payload: url })}
         />
       </div>
-    </div>
+    </section>
   );
 }

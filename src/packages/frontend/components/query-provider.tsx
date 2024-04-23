@@ -9,7 +9,7 @@ export type State = {
   selectedSource: string;
   selectedDestination: string;
   result: PathInfo[][];
-  method: 'bfs' | 'ids';
+  isBFS: boolean;
   bonus: boolean;
 };
 
@@ -19,7 +19,7 @@ export type Action =
   | { type: 'SET_SELECTED_SOURCE'; payload: string }
   | { type: 'SET_SELECTED_DESTINATION'; payload: string }
   | { type: 'SET_RESULT'; payload: PathInfo[][] }
-  | { type: 'SET_METHOD'; payload: 'bfs' | 'ids' }
+  | { type: 'SET_ISBFS'; payload: boolean } 
   | { type: 'SET_BONUS'; payload: boolean }
   | { type: 'SWAP' };
 
@@ -29,7 +29,7 @@ const initialState: State = {
   selectedSource: '',
   selectedDestination: '',
   result: [],
-  method: 'bfs',
+  isBFS: true,
   bonus: false,
 };
 
@@ -46,8 +46,8 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, selectedDestination: action.payload };
     case 'SET_RESULT':
       return { ...state, result: action.payload };
-    case 'SET_METHOD':
-      return { ...state, method: action.payload };
+    case 'SET_ISBFS':
+      return { ...state, isBFS: action.payload };
     case 'SET_BONUS':
       return { ...state, bonus: action.payload };
     case 'SWAP':
