@@ -2,6 +2,14 @@
 import { PathInfo } from '@/types/result';
 import React, { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react';
 
+
+export type GraphLinks = {
+  source: string;
+  targets: Set<string>;
+};
+
+export type LinkNodes = Record<string, GraphLinks>;
+
 // Define the initial state and action types
 export type State = {
   source: string;
@@ -11,6 +19,8 @@ export type State = {
   result: PathInfo[][];
   isBFS: boolean;
   bonus: boolean;
+  nodes: Set<string>;
+  linkNodes: LinkNodes;
 };
 
 export type Action =
@@ -19,8 +29,10 @@ export type Action =
   | { type: 'SET_SELECTED_SOURCE'; payload: string }
   | { type: 'SET_SELECTED_DESTINATION'; payload: string }
   | { type: 'SET_RESULT'; payload: PathInfo[][] }
-  | { type: 'SET_ISBFS'; payload: boolean } 
+  | { type: 'SET_ISBFS'; payload: boolean }
   | { type: 'SET_BONUS'; payload: boolean }
+  | { type: 'SET_NODES'; payload: Set<string> }
+  | { type: 'SET_LINK_NODES'; payload: LinkNodes }
   | { type: 'SWAP' };
 
 const initialState: State = {
@@ -31,6 +43,8 @@ const initialState: State = {
   result: [],
   isBFS: true,
   bonus: false,
+  nodes: new Set<string>(),
+  linkNodes: {},
 };
 
 // Reducer function
@@ -50,6 +64,10 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, isBFS: action.payload };
     case 'SET_BONUS':
       return { ...state, bonus: action.payload };
+    case 'SET_NODES':
+      return { ...state, nodes: action.payload };
+    case 'SET_LINK_NODES':
+      return { ...state, linkNodes: action.payload };
     case 'SWAP':
       return {
         ...state,
