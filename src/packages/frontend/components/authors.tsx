@@ -1,4 +1,3 @@
-import * as React from "react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -6,10 +5,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerFooter,
-  DrawerTrigger,
+  DrawerTrigger
 } from "@/components/ui/drawer";
 
 type AuthorData = {
