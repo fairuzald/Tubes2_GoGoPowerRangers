@@ -7,7 +7,7 @@ import {
   defineNode,
   GraphController,
   GraphLink,
-  GraphNode
+  GraphNode,
 } from "d3-graph-controller";
 import "d3-graph-controller/default.css";
 import React, { useEffect, useRef, useState } from "react";
@@ -49,10 +49,10 @@ const ForceGraph: React.FC = () => {
       id: nodeId,
       type: "primary",
       isFocused: false,
-      color: "green",
+      color: "#fca311",
       label: {
         color: "black",
-        fontSize: "1rem",
+        fontSize: "0.5rem",
         text: nodeId,
       },
       radius: 20,
@@ -66,17 +66,19 @@ const ForceGraph: React.FC = () => {
     const { source, targets } = link;
     targets.forEach((dest) => {
       if (nodes[source] && nodes[dest]) {
-        const link = defineLink<CustomType, CustomNode, CustomNode, CustomLink>({
-          source: nodes[source],
-          target: nodes[dest],
-          color: "red",
-          label: {
+        const link = defineLink<CustomType, CustomNode, CustomNode, CustomLink>(
+          {
+            source: nodes[source],
+            target: nodes[dest],
             color: "black",
-            fontSize: "1rem",
-            text: "128",
-          },
-          length: 700,
-        });
+            label: {
+              color: "black",
+              fontSize: "1rem",
+              text: "",
+            },
+            length: 200,
+          }
+        );
 
         linkNodes.push(link);
       }
@@ -108,7 +110,11 @@ const ForceGraph: React.FC = () => {
   return (
     <div
       ref={graphWrapperRef}
-      style={{ width: "100%", height: "500px", border: "1px solid red" }}
+      style={{
+        width: "100%",
+        height: "250px",
+        backgroundColor: "white",
+      }}
     >
       {/* The graph will render inside this div */}
     </div>

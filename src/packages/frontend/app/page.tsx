@@ -35,12 +35,13 @@ export default function Home() {
 
         {/* Input Query */}
         <InputQuery />
+
+        {/* Submit button */}
+        <SwitchAPIReq />
         
         {/* Bonus: Graph Visualization */}
         <ForceGraph/>
 
-        {/* Submit button */}
-        <SwitchAPIReq />
 
         {/* Grid Result Card */}
         <CardGridResult />
