@@ -1,9 +1,9 @@
+import ForceGraph from "@/components/graph";
 import CardGridResult from "@/components/individual-paths";
 import InputQuery from "@/components/input-query";
 import SwitchAPIReq from "@/components/switch-api-req";
 import { Metadata } from "next";
 import Image from "next/image";
-
 
 export default function Home() {
   return (
@@ -35,6 +35,9 @@ export default function Home() {
 
         {/* Input Query */}
         <InputQuery />
+        
+        {/* Bonus: Graph Visualization */}
+        <ForceGraph/>
 
         {/* Submit button */}
         <SwitchAPIReq />
