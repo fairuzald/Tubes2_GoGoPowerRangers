@@ -83,14 +83,20 @@ const SwitchAPIReq = () => {
       // Using object for the final result with URL as key
       const uniquePathsWithInfo: Record<string, PathInfo> = {};
 
-      // Fetch info for each unique URL
-      for (const url of uniquePaths) {
-        const info = await fetchInfoUrl(url);
-        if (info) {
-          uniquePathsWithInfo[url] = info;
-        }
-      }
 
+      // add depth
+      const uniquePathsWithDepth: Record<string, number> = {};
+
+      const uniquePathsArray = Array.from(uniquePaths);
+
+      for (let i = 0; i < uniquePathsArray.length; i++) {
+          const url = uniquePathsArray[i];
+          const info = await fetchInfoUrl(url);
+          if (info) {
+              uniquePathsWithInfo[url] = info;
+              uniquePathsWithDepth[url] = i;
+          }
+      }
 
       let dictionary: { [key: string]: { source: string; targets: Set<string> } } = {};
 
@@ -105,7 +111,7 @@ const SwitchAPIReq = () => {
 
           // Update dictionary with index information
           if (!dictionary[url]) {
-            dictionary[url] = { source: url, targets: new Set<string>() };
+            dictionary[url] = { source: url, targets: new Set<string>()};
           }
           dictionary[url].targets.add(result[i][j + 1] || "");
         }
@@ -114,7 +120,7 @@ const SwitchAPIReq = () => {
 
 
       dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
-      dispatch({ type: "SET_NODES", payload: new Set(uniquePaths) });
+      dispatch({ type: "SET_NODES", payload: uniquePathsWithDepth });
       dispatch({ type: "SET_LINK_NODES", payload: dictionary });
     } catch (err) {
       console.error(err);

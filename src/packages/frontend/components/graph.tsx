@@ -14,6 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { GraphLinks, useQueryContext } from "./query-provider";
 
 export type CustomType = "primary" | "secondary";
+const colors = ["#eb9834", "#3489eb", "#5634eb", "#5634eb", "#34eb46", "#4334eb"]
 
 export interface CustomNode extends GraphNode<CustomType> {
   radius: number;
@@ -41,15 +42,22 @@ const ForceGraph: React.FC = () => {
   const graphWrapperRef = useRef<HTMLDivElement>(null);
 
   const { state } = useQueryContext();
+  console.log(state);
 
   let nodes: Record<string, CustomNode> = {};
 
-  state.nodes.forEach((nodeId) => {
+  Object.keys(state.nodes).forEach((nodeId: string) => {
+    const depth = state.nodes[nodeId];
     const nodeGraph = defineNode<CustomType, CustomNode>({
       id: nodeId,
       type: "primary",
       isFocused: false,
-      color: "green",
+      color:
+        nodeId === state.selectedSource
+          ? "#eb3a23"
+          : nodeId === state.selectedDestination
+            ? "#0c5925"
+            : colors[depth],
       label: {
         color: "black",
         fontSize: "1rem",
@@ -69,13 +77,13 @@ const ForceGraph: React.FC = () => {
         const link = defineLink<CustomType, CustomNode, CustomNode, CustomLink>({
           source: nodes[source],
           target: nodes[dest],
-          color: "red",
+          color: "black",
           label: {
-            color: "black",
-            fontSize: "1rem",
-            text: "128",
+            color: "#FFFFFF",
+            fontSize: "0.5rem",
+            text: "",
           },
-          length: 700,
+          length: 500,
         });
 
         linkNodes.push(link);
@@ -103,12 +111,13 @@ const ForceGraph: React.FC = () => {
       );
       setController(newController);
     }
-  }, [graph]);
+  }, [graph, controller]);
 
   return (
     <div
       ref={graphWrapperRef}
-      style={{ width: "100%", height: "500px", border: "1px solid red" }}
+      style={{ width: "100%", height: "500px", border: "1px solid red", color: "#FFFFFF" }}
+      className="bg-white"
     >
       {/* The graph will render inside this div */}
     </div>

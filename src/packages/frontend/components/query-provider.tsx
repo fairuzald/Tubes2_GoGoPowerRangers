@@ -10,6 +10,8 @@ export type GraphLinks = {
 
 export type LinkNodes = Record<string, GraphLinks>;
 
+export type NodesInfo = Record<string, number>;
+
 // Define the initial state and action types
 export type State = {
   source: string;
@@ -19,7 +21,7 @@ export type State = {
   result: PathInfo[][];
   isBFS: boolean;
   bonus: boolean;
-  nodes: Set<string>;
+  nodes: NodesInfo;
   linkNodes: LinkNodes;
 };
 
@@ -31,7 +33,7 @@ export type Action =
   | { type: 'SET_RESULT'; payload: PathInfo[][] }
   | { type: 'SET_ISBFS'; payload: boolean }
   | { type: 'SET_BONUS'; payload: boolean }
-  | { type: 'SET_NODES'; payload: Set<string> }
+  | { type: 'SET_NODES'; payload: NodesInfo }
   | { type: 'SET_LINK_NODES'; payload: LinkNodes }
   | { type: 'SWAP' };
 
@@ -43,7 +45,7 @@ const initialState: State = {
   result: [],
   isBFS: true,
   bonus: false,
-  nodes: new Set<string>(),
+  nodes: {},
   linkNodes: {},
 };
 
