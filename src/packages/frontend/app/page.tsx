@@ -1,14 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import CardGrid from "@/components/individual-paths";
 import InputQuery from "@/components/input-query";
-import { useQueryContext } from "@/components/query-provider";
-import type { PathInfo } from "@/types/result";
 import Image from "next/image";
-import { useState } from "react";
-import toast from "react-hot-toast";
 import SwitchOption from "@/components/switch-option";
-// import Graph from "@/components/graph";
 import ForceGraph from "@/components/graph";
 
 
@@ -42,20 +36,8 @@ export default function Home() {
         <InputQuery />
         {/* Submit button */}
         <SwitchOption/>
-        
-        {/* <Button
-          size={"lg"}
-          className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
-          onClick={onSubmit}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Go!"}
-        </Button> */}
-        <CardGrid />
         <ForceGraph/>
-        {/* <Graph/> */}
-
-        {/* <Results/> */}
+        <CardGrid />
       </div>
     </main>
   );
