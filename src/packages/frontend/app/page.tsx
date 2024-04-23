@@ -3,7 +3,9 @@ import InputQuery from "@/components/input-query";
 import SwitchAPIReq from "@/components/switch-api-req";
 import { Metadata } from "next";
 import Image from "next/image";
-
+import { useState } from "react";
+import SwitchOption from "@/components/switch-option";
+import ForceGraph from "@/components/graph";
 
 export default function Home() {
   return (
@@ -37,6 +39,9 @@ export default function Home() {
         <InputQuery />
 
         {/* Submit button */}
+        <SwitchOption/>
+        <CardGrid />
+        <ForceGraph/>
         <SwitchAPIReq />
 
         {/* Grid Result Card */}
