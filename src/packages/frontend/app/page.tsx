@@ -39,12 +39,11 @@ export default function Home() {
         {/* Submit button */}
         <SwitchAPIReq />
         
-        {/* Bonus: Graph Visualization */}
-        <ForceGraph/>
-
-
         {/* Grid Result Card */}
         <CardGridResult />
+
+        {/* Bonus: Graph Visualization */}
+        <ForceGraph/>
       </div>
     </main>
   );
