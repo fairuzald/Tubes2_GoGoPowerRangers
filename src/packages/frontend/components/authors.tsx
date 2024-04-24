@@ -1,11 +1,12 @@
 import Image from "next/image";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerTrigger
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 
 type AuthorData = {
@@ -13,6 +14,7 @@ type AuthorData = {
   nim: string;
   imageSrc: string;
   role: string;
+  url: string;
 };
 
 const authors: AuthorData[] = [
@@ -21,18 +23,21 @@ const authors: AuthorData[] = [
     nim: "13522042",
     imageSrc: "/amel.jpg",
     role: "The Frontend Developer & Graph Visualizer",
+    url: "https://github.com/amaliap21",
   },
   {
     name: "Moh Fairuz Alauddin Yahya",
     nim: "13522057",
-    imageSrc: "/sample.jpg",
+    imageSrc: "/fairuz.jpeg",
     role: "The Backend Developer & BFS Handler",
+    url: "https://github.com/fairuzald",
   },
   {
     name: "Julian Chandra Sutadi",
     nim: "13522080",
     imageSrc: "/julian.jpg",
     role: "The Algorithm Guy & IDS Handler",
+    url: "https://github.com/julianchandras",
   },
 ];
 
@@ -53,7 +58,7 @@ export function Authors() {
           {authors.map((author) => (
             <div
               key={author.nim}
-              className="flex flex-col items-center justify-center p-4 gap-3"
+              className="flex flex-col items-center justify-center"
             >
               {/* Include Image component for author's image */}
               <Image
@@ -66,9 +71,21 @@ export function Authors() {
               <p className="text-xl font-bold">
                 {author.name} {`(` + author.nim + `)`}
               </p>
-              <p className="text-lg font-semibold text-gray-500">
-                {author.role}
-              </p>
+
+              <div className="flex flex-row items-center">
+                <Link href={author.url}>
+                  <Image
+                    src="/github.png"
+                    alt="Github Logo"
+                    className="w-full h-full rounded-full"
+                    width={50}
+                    height={50}
+                  />
+                </Link>
+                <p className="text-lg font-semibold text-gray-500">
+                  {author.role}
+                </p>
+              </div>
             </div>
           ))}
         </div>

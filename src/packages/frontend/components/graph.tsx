@@ -1,17 +1,25 @@
 "use client";
+<<<<<<< HEAD
+=======
+import React, { useEffect, useRef, useState, useMemo } from "react";
+>>>>>>> c579a4be17a0616cd8aeec50bd93a79da8d06618
 import {
   defineGraph,
   defineGraphConfig,
   defineLink,
   defineNode,
   GraphController,
+  GraphNode,
   GraphLink,
-  GraphNode
 } from "d3-graph-controller";
 import "d3-graph-controller/default.css";
+<<<<<<< HEAD
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { GraphLinks, useQueryContext } from "./query-provider";
+=======
+import { useQueryContext, GraphLinks } from "./query-provider";
+>>>>>>> c579a4be17a0616cd8aeec50bd93a79da8d06618
 
 export type CustomType = "primary" | "secondary";
 const colors = ["#eb9834", "#3489eb", "#5634eb", "#5634eb", "#34eb46", "#4334eb"]
@@ -41,6 +49,52 @@ const config = defineGraphConfig<CustomType, CustomNode, CustomLink>({
 const ForceGraph: React.FC = () => {
   const graphWrapperRef = useRef<HTMLDivElement>(null);
   const { state } = useQueryContext();
+<<<<<<< HEAD
+=======
+
+  const { nodes, links } = useMemo(() => {
+    let nodes: Record<string, CustomNode> = {};
+    let links: CustomLink[] = [];
+
+    state.nodes.forEach((nodeId) => {
+      nodes[nodeId] = defineNode<CustomType, CustomNode>({
+        id: nodeId,
+        type: "primary",
+        isFocused: false,
+        color: "#fca311",
+        label: {
+          color: "black",
+          fontSize: "0.5rem",
+          text: nodeId,
+        },
+        radius: 32,
+      });
+    });
+
+    Object.values(state.linkNodes).forEach((link: GraphLinks) => {
+      link.targets.forEach((dest) => {
+        if (nodes[link.source] && nodes[dest]) {
+          links.push(
+            defineLink<CustomType, CustomNode, CustomNode, CustomLink>({
+              source: nodes[link.source],
+              target: nodes[dest],
+              color: "black",
+              label: {
+                color: "black",
+                fontSize: "1rem",
+                text: "",
+              },
+              length: 128,
+            })
+          );
+        }
+      });
+    });
+
+    return { nodes: Object.values(nodes), links };
+  }, [state]);
+
+>>>>>>> c579a4be17a0616cd8aeec50bd93a79da8d06618
   const [controller, setController] = useState<GraphController<
     CustomType,
     CustomNode,
@@ -48,6 +102,7 @@ const ForceGraph: React.FC = () => {
   > | null>(null);
 
   useEffect(() => {
+<<<<<<< HEAD
     if (!graphWrapperRef.current || !state) return;
 
     const nodes: Record<string, CustomNode> = {};
@@ -147,6 +202,32 @@ const ForceGraph: React.FC = () => {
       </>
     )
   )
+=======
+    if (graphWrapperRef.current) {
+      const graph = defineGraph<CustomType, CustomNode, CustomLink>({
+        nodes,
+        links,
+      });
+      const newController = new GraphController(
+        graphWrapperRef.current,
+        graph,
+        config
+      );
+      setController(newController);
+    }
+  }, [nodes, links]);
+
+  return (
+    <div
+      ref={graphWrapperRef}
+      style={{
+        width: "600px",
+        height: "400px",
+        backgroundColor: "white",
+      }}
+    ></div>
+  );
+>>>>>>> c579a4be17a0616cd8aeec50bd93a79da8d06618
 };
 
 export default ForceGraph;
