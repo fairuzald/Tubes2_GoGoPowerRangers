@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -7,7 +8,6 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import Link from "next/link";
 
 type AuthorData = {
   name: string;
@@ -58,7 +58,7 @@ export function Authors() {
           {authors.map((author) => (
             <div
               key={author.nim}
-              className="flex flex-col items-center justify-center"
+              className="flex flex-col items-center justify-center gap-2"
             >
               {/* Include Image component for author's image */}
               <Image
@@ -72,14 +72,14 @@ export function Authors() {
                 {author.name} {`(` + author.nim + `)`}
               </p>
 
-              <div className="flex flex-row items-center">
+              <div className="flex flex-row items-center gap-4">
                 <Link href={author.url}>
                   <Image
                     src="/github.png"
                     alt="Github Logo"
-                    className="w-full h-full rounded-full"
-                    width={50}
-                    height={50}
+                    className="w-full h-full"
+                    width={25}
+                    height={25}
                   />
                 </Link>
                 <p className="text-lg font-semibold text-gray-500">
