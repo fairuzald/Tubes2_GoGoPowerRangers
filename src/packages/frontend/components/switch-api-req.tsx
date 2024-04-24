@@ -122,6 +122,8 @@ const SwitchAPIReq = () => {
       dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
       dispatch({ type: "SET_NODES", payload: uniquePathsWithDepth });
       dispatch({ type: "SET_LINK_NODES", payload: dictionary });
+      dispatch({ type: "SET_RUNTIME", payload: data.runtime as number });
+      dispatch({ type: "SET_ARTICLE_COUNT", payload: data.articleCount as number});
     } catch (err) {
       console.error(err);
       const errMsg =

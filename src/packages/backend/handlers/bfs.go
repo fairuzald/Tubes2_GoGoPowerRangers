@@ -9,15 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func BFSHandlers(source string, destination string, maxDepth int) ([][]string, error) {
+func BFSHandlers(source string, destination string, maxDepth int) ([][]string, int, error) {
 	if source == destination {
-		return [][]string{{source}}, nil
+		return [][]string{{source}}, 1, nil
 	}
 
 	queue := [][]string{{source}}
 	visited := make(map[string]struct{})
 	paths := [][]string{}
 	found := false
+	counter := 0
 
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
@@ -42,6 +43,7 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 
 		for _, path := range queueSameDepth {
 			currentNode := path[len(path)-1]
+			counter++
 
 			// Check if the current node is the destination
 			if currentNode == destination {
@@ -83,7 +85,7 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, e
 		wg.Wait()
 	}
 
-	return paths, nil
+	return paths, counter, nil
 }
 
 func BFSHTTPHandler(c *gin.Context) {
@@ -102,9 +104,10 @@ func BFSHTTPHandler(c *gin.Context) {
 
 	var paths [][]string
 	var err error
+	var count int
 
 	// Measure runtime and set tes accordingly
-	paths, err = BFSHandlers(reqBody.Source, reqBody.Destination, 6)
+	paths, count, err = BFSHandlers(reqBody.Source, reqBody.Destination, 6)
 
 	// Calculate runtime
 	endTime := time.Now()
@@ -117,8 +120,9 @@ func BFSHTTPHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Data diterima",
-		"paths":   paths,
-		"runtime": runtime,
+		"message":      "Data diterima",
+		"paths":        paths,
+		"runtime":      runtime,
+		"articleCount": count,
 	})
 }

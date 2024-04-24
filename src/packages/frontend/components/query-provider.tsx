@@ -23,6 +23,8 @@ export type State = {
   bonus: boolean;
   nodes: NodesInfo;
   linkNodes: LinkNodes;
+  runtime?: number;
+  articleCount?: number;
 };
 
 export type Action =
@@ -35,6 +37,8 @@ export type Action =
   | { type: 'SET_BONUS'; payload: boolean }
   | { type: 'SET_NODES'; payload: NodesInfo }
   | { type: 'SET_LINK_NODES'; payload: LinkNodes }
+  | { type: 'SET_RUNTIME'; payload: number }
+  | { type: 'SET_ARTICLE_COUNT'; payload: number }
   | { type: 'SWAP' };
 
 const initialState: State = {
@@ -47,6 +51,8 @@ const initialState: State = {
   bonus: false,
   nodes: {},
   linkNodes: {},
+  runtime: undefined,
+  articleCount: undefined,
 };
 
 // Reducer function
@@ -70,6 +76,10 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, nodes: action.payload };
     case 'SET_LINK_NODES':
       return { ...state, linkNodes: action.payload };
+    case 'SET_RUNTIME':
+      return { ...state, runtime: action.payload };
+    case 'SET_ARTICLE_COUNT':
+      return { ...state, articleCount: action.payload };
     case 'SWAP':
       return {
         ...state,

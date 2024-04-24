@@ -20,6 +20,7 @@ export default function InputQuery() {
     setSourceData(destinationData);
     setDestinationData(temp);
   };
+console.log(destination, source)
 
   return (
     <section className="flex gap-7 w-full max-w-[1500px] items-center justify-center">

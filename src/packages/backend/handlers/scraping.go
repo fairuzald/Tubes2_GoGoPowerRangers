@@ -183,9 +183,9 @@ func ScrapperHandlerLinkBuffer(url string) ([]string, error) {
 	links := make([]string, 0)
 	linkMap := make(map[string]bool)
 
-	doc.Find("a[href^='/wiki/']").Each(func(i int, s *goquery.Selection) {
+	doc.Find("main #mw-content-text a[href^='/wiki/']").Each(func(i int, s *goquery.Selection) {
 		link, exists := s.Attr("href")
-		if exists && !strings.Contains(link, ":") {
+		if exists && !strings.Contains(link, ":") && !strings.Contains(link, "/Main_Page") {
 			if !linkMap[link] {
 				linkMap[link] = true
 				var buffer bytes.Buffer
