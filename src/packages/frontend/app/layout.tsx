@@ -12,8 +12,6 @@ const poppins = Poppins({
   display: "swap",
 });
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{

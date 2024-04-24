@@ -1,10 +1,9 @@
-import clsx from "clsx";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "./ui/button";
 import { DrawerAbout } from "@/components/about";
 import { Authors } from "@/components/authors";
-import React, { useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useRef } from "react";
+import { Button } from "./ui/button";
 
 interface PathItem {
   name: string;

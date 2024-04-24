@@ -1,6 +1,5 @@
 import Image from "next/image";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -8,6 +7,7 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import Link from "next/link";
 
 type AuthorData = {
   name: string;

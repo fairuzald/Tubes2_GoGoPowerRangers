@@ -1,5 +1,3 @@
-import * as React from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -12,6 +10,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import InteractiveImage from "@/components/ui/interactive-image";
+import * as React from "react";
 
 export function DrawerAbout() {
   const [goal, setGoal] = React.useState(350);
