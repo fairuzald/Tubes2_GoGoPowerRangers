@@ -131,7 +131,7 @@ const ForceGraph: React.FC = () => {
               {" "} to{" "}
               <Link href={state.selectedDestination} className="text-yellow-hover font-bold hover:underline hover:underline-offset-4">{state.destination}</Link>
               {" "} in{" "}
-              <span className="text-yellow-hover font-bold">{state.runtime} seconds</span> runtime with <span className="text-yellow-hover font-bold">{state.articleCount} articles checked</span>
+              <span className="text-yellow-hover font-bold">{state.runtime*1000} miliseconds</span> runtime with <span className="text-yellow-hover font-bold">{state.articleCount} articles checked</span>
               {" "} and through {" "}
               <span className="text-yellow-hover font-bold">{(state.result[0].length-1)*state.result.length} articles</span>
 
