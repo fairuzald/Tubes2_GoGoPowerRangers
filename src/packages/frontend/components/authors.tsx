@@ -27,17 +27,17 @@ const authors: AuthorData[] = [
     url: "https://github.com/amaliap21",
   },
   {
-    name: "Moh Fairuz Alauddin Yahya",
+    name: "Moh Fairuz Alauddin Y.",
     nim: "13522057",
     imageSrc: "/fairuz.jpeg",
     role: "The Backend Developer & BFS Handler",
     url: "https://github.com/fairuzald",
   },
   {
-    name: "Julian Chandra Sutadi",
+    name: "Julian Chandra S.",
     nim: "13522080",
     imageSrc: "/julian.jpg",
-    role: "The Algorithm Guy & IDS Handler",
+    role: "The Algorithm Optimizer & IDS Handler",
     url: "https://github.com/julianchandras",
   },
 ];
@@ -72,27 +72,24 @@ export function Authors() {
           Authors
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="fixed inset-x-0 bottom-0 z-50 mt-24 py-5 h-auto grid grid-rows-2 rounded-t-[10px] bg-yellow-primary">
+      <DrawerContent className="fixed inset-x-0 bottom-0 z-50 mt-24 py-5 h-auto grid grid-rows-2 rounded-t-[10px] bg-yellow-primary px-4">
         <div className="grid grid-cols-3 row-span-full col-span-full">
           {/* This grid is for your second row */}
           {authors.map((author) => (
-            <div
-              key={author.nim}
-              className="flex flex-col items-center justify-center gap-2"
-            >
+            <div key={author.nim} className="grid grid-row-3 gap-2">
               {/* Include Image component for author's image */}
               <Image
                 src={author.imageSrc}
                 alt={author.name}
-                className="w-24 h-24 rounded-full"
+                className="w-16 h-16 lg:w-24 lg:h-24 rounded-full mx-auto"
                 width={100}
                 height={100}
               />
-              <p className="text-xl font-bold">
+              <p className="text-base lg:text-xl text-center font-bold">
                 {author.name} {`(` + author.nim + `)`}
               </p>
 
-              <div className="flex flex-row items-center gap-4">
+              <div className="flex flex-col lg:flex-row items-center gap-2 lg:gap-4 place-self-end lg:place-self-center">
                 <Link href={author.url}>
                   <Image
                     src="/github.png"
@@ -102,7 +99,7 @@ export function Authors() {
                     height={25}
                   />
                 </Link>
-                <p className="text-lg font-semibold text-gray-500">
+                <p className="text-xs lg:text-lg text-center font-semibold text-gray-500">
                   {author.role}
                 </p>
               </div>
@@ -110,7 +107,10 @@ export function Authors() {
           ))}
         </div>
         <DrawerClose asChild>
-          <Button variant="outline" className="text-lg">
+          <Button
+            variant="outline"
+            className="text-lg hover:bg-white hover:text-yellow-primary"
+          >
             Back
           </Button>
         </DrawerClose>
