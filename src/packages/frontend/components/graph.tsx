@@ -41,6 +41,7 @@ const config = defineGraphConfig<CustomType, CustomNode, CustomLink>({
 const ForceGraph: React.FC = () => {
   const graphWrapperRef = useRef<HTMLDivElement>(null);
   const { state } = useQueryContext();
+  console.log(state);
   const [controller, setController] = useState<GraphController<
     CustomType,
     CustomNode,
@@ -62,7 +63,7 @@ const ForceGraph: React.FC = () => {
             ? "#eb3a23"
             : nodeId === state.selectedDestination
               ? "#0c5925"
-              : colors[depth],
+              : colors[depth % colors.length],
         label: {
           color: "black",
           fontSize: "1rem",

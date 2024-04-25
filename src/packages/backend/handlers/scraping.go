@@ -159,11 +159,8 @@ func ScrapperHandlerLink(url string) ([]string, error) {
 }
 
 func ScrapperHandlerLinkBuffer(url string) ([]string, error) {
-	client := &http.Client{
-		Timeout: time.Second * 10, // Set a timeout of 10 seconds
-	}
 
-	res, err := client.Get(url)
+	res, err := http.Get(url)
 	// Request the HTML page.
 	if err != nil {
 		return nil, fmt.Errorf("failed to request URL: %w", err)

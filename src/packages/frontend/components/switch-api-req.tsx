@@ -46,6 +46,7 @@ const fetchInfoUrl = async (url: string) => {
 const SwitchAPIReq = () => {
   const { state, dispatch } = useQueryContext();
   const [loading, setLoading] = useState(false);
+  
 
   const onSubmit = async () => {
     // Validation check
@@ -87,16 +88,24 @@ const SwitchAPIReq = () => {
       // add depth
       const uniquePathsWithDepth: Record<string, number> = {};
 
-      const uniquePathsArray = Array.from(uniquePaths);
-
-      for (let i = 0; i < uniquePathsArray.length; i++) {
-          const url = uniquePathsArray[i];
-          const info = await fetchInfoUrl(url);
-          if (info) {
-              uniquePathsWithInfo[url] = info;
-              uniquePathsWithDepth[url] = i;
-          }
+      for (const url of uniquePaths) {
+        const info = await fetchInfoUrl(url);
+        if (info) {
+          uniquePathsWithInfo[url] = info;
+        }
       }
+
+      for(let i = 0; i < result.length; i++) {
+        for(let j = 0; j < result[i].length; j++) {
+          const url = result[i][j];
+          // Mapping the title 
+          if(!uniquePathsWithDepth[url])
+            {
+              uniquePathsWithDepth[url] = j;
+            }
+        }
+      }
+
 
       let dictionary: { [key: string]: { source: string; targets: Set<string> } } = {};
 
