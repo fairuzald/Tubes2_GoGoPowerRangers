@@ -59,12 +59,15 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, i
 					// fmt.Println("Goroutine started for node:", currentNode)
 
 					// Get links from the current node
-					links, err := ScrapperHandlerLinkBuffer(currentNode)
-
-					if err != nil {
-						// Handle error
-						fmt.Println(err)
-						return // Return to avoid deadlock
+					links, ok := GetLinksFromCache(currentNode)
+					if !ok || links == nil || len(links) == 0 {
+						links, err := ScrapperHandlerLinkBuffer(currentNode)
+						if err != nil {
+							// Handle error
+							fmt.Println(err)
+							return // Return to avoid deadlock
+						}
+						SetLinksToCache(currentNode, links)
 					}
 					counter += len(links)
 

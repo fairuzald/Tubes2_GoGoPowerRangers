@@ -12,11 +12,10 @@ func IDSHadlers(source string, destination string, maxDepth int) ([][]string, in
 	if source == destination {
 		return [][]string{{source}}, 0, nil
 	} else {
-		cache := make(map[string][]string)
 		depth := 1
 		for depth <= maxDepth {
 			fmt.Println("Depth", depth)
-			resultPaths, counter, err := DFSHelper(source, destination, depth, &cache)
+			resultPaths, counter, err := DFSHelper(source, destination, depth)
 			if len(resultPaths) > 0 {
 				return resultPaths, counter, err
 			} else {
@@ -27,7 +26,7 @@ func IDSHadlers(source string, destination string, maxDepth int) ([][]string, in
 	return [][]string{}, 0, nil
 }
 
-func DFSHelper(source string, destination string, maxDepth int, cache *map[string][]string) ([][]string, int, error) {
+func DFSHelper(source string, destination string, maxDepth int) ([][]string, int, error) {
 	stack := [][]string{{source}}
 	paths := [][]string{}
 	counter := 0
@@ -43,26 +42,21 @@ func DFSHelper(source string, destination string, maxDepth int, cache *map[strin
 		} else if len(currentPath) <= maxDepth {
 			var links []string
 			var err error
-			if value, ok := (*cache)[currentNode]; ok {
-				links = value
-			} else {
+			links, ok := GetLinksFromCache(currentNode)
+			if !ok || links == nil || len(links) == 0 {
 				links, err = ScrapperHandlerLinkBuffer(currentNode)
-
 				if err != nil {
 					return nil, counter, fmt.Errorf("error while processing %s: %s", currentNode, err)
 				}
-				(*cache)[currentNode] = links
+				SetLinksToCache(currentNode, links)
 			}
 
 			for _, link := range links {
 				if !isInArray(link, currentPath) {
-					// Create a new path by appending the link to the current path
 					newPath := append([]string(nil), currentPath...)
 					newPath = append(newPath, link)
-					// Add the new path to the stack for further exploration
 					stack = append(stack, newPath)
 				}
-
 			}
 		}
 	}
@@ -84,7 +78,7 @@ func IDSHTTPHandler(c *gin.Context) {
 		Destination string `json:"destination"`
 	}
 
-	startTime := time.Now() // Record the start time
+	startTime := time.Now()
 
 	var reqBody ReqBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
@@ -95,21 +89,19 @@ func IDSHTTPHandler(c *gin.Context) {
 	var paths [][]string
 	var err error
 	var count int
-	// Measure runtime and set tes accordingly
-	paths, count, err = BFSHandlers(reqBody.Source, reqBody.Destination, 6)
+	paths, count, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
 
-	// Calculate runtime
 	endTime := time.Now()
 	runtime := endTime.Sub(startTime).Seconds()
 
 	if err != nil {
 		fmt.Print(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform BFS algorithm"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform IDS algorithm"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":      "Data diterima",
+		"message":      "Data received",
 		"paths":        paths,
 		"runtime":      runtime,
 		"articleCount": count,

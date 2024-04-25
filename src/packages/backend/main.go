@@ -1,22 +1,28 @@
 package main
 
 import (
+	"backend/handlers"
 	"backend/router"
+	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// handlers.InitCache()
+	handlers.InitCache()
 	r := router.SetupRouter()
 
 	r.Use(CORSMiddleware())
+
+	http.ListenAndServe("127.0.0.1:8080", r)
+
 	r.Run()
-	// defer func() {
-	// 	if err := handlers.SaveCacheToCSV("cache.csv"); err != nil {
-	// 		fmt.Println("Error saving cache to CSV:", err)
-	// 	}
-	// }()
+	defer func() {
+		if err := handlers.SaveCacheToJSON("cache.json"); err != nil {
+			fmt.Println("Error saving cache to CSV:", err)
+		}
+	}()
 }
 
 func CORSMiddleware() gin.HandlerFunc {
