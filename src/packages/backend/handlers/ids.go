@@ -3,87 +3,79 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func IDSHadlers(source string, destination string, maxDepth int) ([][]string, error) {
+func IDSHadlers(source string, destination string, maxDepth int) ([][]string, int, error) {
 	if source == destination {
-		return [][]string{{source}}, nil
+		return [][]string{{source}}, 0, nil
 	} else {
 		cache := make(map[string][]string)
 		depth := 1
-		found := false
-		for depth <= maxDepth && !found {
-			resultPaths, err := DFSHelper(source, destination, depth, &cache)
+		for depth <= maxDepth {
+			fmt.Println("Depth", depth)
+			resultPaths, counter, err := DFSHelper(source, destination, depth, &cache)
 			if len(resultPaths) > 0 {
-				found = true
-				return resultPaths, err
+				return resultPaths, counter, err
 			} else {
 				depth++
 			}
 		}
 	}
-	return [][]string{}, nil
+	return [][]string{}, 0, nil
 }
 
-func DFSHelper(source string, destination string, maxDepth int, cache *map[string][]string) ([][]string, error) {
+func DFSHelper(source string, destination string, maxDepth int, cache *map[string][]string) ([][]string, int, error) {
 	stack := [][]string{{source}}
-	var mu sync.Mutex // Mutex to synchronize access to the visited map
-	var mu1 sync.Mutex
 	paths := [][]string{}
+	counter := 0
 
 	for len(stack) > 0 {
 		currentPath := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
 		currentNode := currentPath[len(currentPath)-1]
+		counter++
 
 		if currentNode == destination {
-			mu1.Lock()
 			paths = append(paths, currentPath)
-			mu1.Unlock()
-			continue
-		}
+		} else if len(currentPath) <= maxDepth {
+			var links []string
+			var err error
+			if value, ok := (*cache)[currentNode]; ok {
+				links = value
+			} else {
+				links, err = ScrapperHandlerLinkBuffer(currentNode)
 
-		if len(currentPath) > maxDepth {
-			continue
-		}
-
-		var links []string
-		var err error
-
-		if value, ok := (*cache)[currentNode]; ok {
-			links = value
-		} else {
-			links, err = ScrapperHandlerLinkBuffer(currentNode)
-			if err != nil {
-				return nil, fmt.Errorf("error while processing %s: %s", currentNode, err)
+				if err != nil {
+					return nil, counter, fmt.Errorf("error while processing %s: %s", currentNode, err)
+				}
+				(*cache)[currentNode] = links
 			}
-			(*cache)[currentNode] = links
-		}
 
-		var wg sync.WaitGroup
-		for _, link := range links {
-			wg.Add(1)
-			go func(l string) {
-				defer wg.Done()
-				mu.Lock()
-				// Check if the link has not been visited before
-				if !isInArray(l, currentPath) {
+			for _, link := range links {
+				if !isInArray(link, currentPath) {
 					// Create a new path by appending the link to the current path
-					newPath := append(currentPath, l)
+					newPath := append([]string(nil), currentPath...)
+					newPath = append(newPath, link)
 					// Add the new path to the stack for further exploration
 					stack = append(stack, newPath)
 				}
-				mu.Unlock()
-			}(link)
-		}
-		wg.Wait() // Wait for all links to be processed before moving to the next node
-	}
 
-	return paths, nil
+			}
+		}
+	}
+	return paths, counter, nil
+}
+
+func isInArray(item string, array []string) bool {
+	for _, value := range array {
+		if value == item {
+			return true
+		}
+	}
+	return false
 }
 
 func IDSHTTPHandler(c *gin.Context) {
@@ -102,9 +94,9 @@ func IDSHTTPHandler(c *gin.Context) {
 
 	var paths [][]string
 	var err error
-
+	var count int
 	// Measure runtime and set tes accordingly
-	paths, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
+	paths, count, err = BFSHandlers(reqBody.Source, reqBody.Destination, 6)
 
 	// Calculate runtime
 	endTime := time.Now()
@@ -117,17 +109,9 @@ func IDSHTTPHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Data diterima",
-		"paths":   paths,
-		"runtime": runtime,
+		"message":      "Data diterima",
+		"paths":        paths,
+		"runtime":      runtime,
+		"articleCount": count,
 	})
-}
-
-func isInArray(item string, array []string) bool {
-	for _, value := range array {
-		if value == item {
-			return true
-		}
-	}
-	return false
 }

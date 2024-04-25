@@ -7,10 +7,16 @@ import (
 )
 
 func main() {
+	// handlers.InitCache()
 	r := router.SetupRouter()
 
 	r.Use(CORSMiddleware())
 	r.Run()
+	// defer func() {
+	// 	if err := handlers.SaveCacheToCSV("cache.csv"); err != nil {
+	// 		fmt.Println("Error saving cache to CSV:", err)
+	// 	}
+	// }()
 }
 
 func CORSMiddleware() gin.HandlerFunc {

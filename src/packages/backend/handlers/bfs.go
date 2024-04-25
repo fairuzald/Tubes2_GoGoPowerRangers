@@ -21,6 +21,7 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, i
 
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
+	var mutex1 sync.Mutex
 	// Semaphore to limit the number of concurrent goroutines
 	var sema = make(chan struct{}, 250)
 
@@ -43,9 +44,9 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, i
 			// Check if the current node is the destination
 			if currentNode == destination {
 				found = true
-				mutex.Lock()
+				mutex1.Lock()
 				paths = append(paths, path)
-				mutex.Unlock()
+				mutex1.Unlock()
 			} else if !found {
 				wg.Add(1)
 				// Acquire token semaphore
@@ -70,10 +71,12 @@ func BFSHandlers(source string, destination string, maxDepth int) ([][]string, i
 					mutex.Lock()
 					defer mutex.Unlock()
 					for _, link := range links {
-						// Create a new path by appending the link to the current path
-						newPath := append([]string(nil), path...)
-						newPath = append(newPath, link)
-						queue = append(queue, newPath)
+						if !isInArray(link, path) {
+							// Create a new path by appending the link to the current path
+							newPath := append([]string(nil), path...)
+							newPath = append(newPath, link)
+							queue = append(queue, newPath)
+						}
 					}
 
 					// fmt.Println("Goroutine finished for node:", currentNode)

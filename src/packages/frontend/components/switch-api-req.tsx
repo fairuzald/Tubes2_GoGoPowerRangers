@@ -2,6 +2,7 @@
 import { useQueryContext } from "@/components/query-provider";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { makeApiRequest } from "@/libs/helper";
 import type { PathInfo } from "@/types/result";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -42,11 +43,17 @@ const fetchInfoUrl = async (url: string) => {
     throw err; // Rethrow the error to propagate it further if needed
   }
 };
+interface ApiResponse {
+  message: string;
+  paths: string[][];
+  runtime: number;
+  articleCount: number;
+}
 
 const SwitchAPIReq = () => {
   const { state, dispatch } = useQueryContext();
   const [loading, setLoading] = useState(false);
-  
+
 
   const onSubmit = async () => {
     // Validation check
@@ -55,91 +62,89 @@ const SwitchAPIReq = () => {
       return;
     }
     setLoading(true);
-    const loadingToast = toast.loading("Finding path...");
     try {
       const url = !state.isBFS ? "/api/ids" : "/api/bfs";
-      const response = await fetch(url, {
-        cache: "no-cache",
+      await makeApiRequest({
+        method: "POST",
+        endpoint: url,
         headers: {
           "Content-Type": "application/json",
         },
-        method: "POST",
         body: JSON.stringify({
           source: state.selectedSource,
           destination: state.selectedDestination,
         }),
+        loadingMessage: "Fetching data...",
+        successMessage: "Data fetched successfully!",
+        onSuccess: async (data:ApiResponse) => {
+          const result = data.paths as string[][];
+
+          // Using Set to store unique URLs
+          const uniquePaths = new Set<string>();
+          result.forEach((path) => path.forEach((url) => uniquePaths.add(url)));
+
+          // Using object for the final result with URL as key
+          const uniquePathsWithInfo: Record<string, PathInfo> = {};
+
+
+          // add depth
+          const uniquePathsWithDepth: Record<string, number> = {};
+
+          for (const url of uniquePaths) {
+            const info = await fetchInfoUrl(url);
+            if (info) {
+              uniquePathsWithInfo[url] = info;
+            }
+          }
+
+          for (let i = 0; i < result.length; i++) {
+            for (let j = 0; j < result[i].length; j++) {
+              const url = result[i][j];
+              // Mapping the title 
+              if (!uniquePathsWithDepth[url]) {
+                uniquePathsWithDepth[url] = j;
+              }
+            }
+          }
+
+
+          let dictionary: { [key: string]: { source: string; targets: Set<string> } } = {};
+
+          // Map the result with the info using linkNodes
+          let resultsWithInfo = [];
+          for (let i = 0; i < result.length; i++) {
+            let arr = [];
+            for (let j = 0; j < result[i].length; j++) {
+              const url = result[i][j];
+              const info = uniquePathsWithInfo[url];
+              arr.push(info);
+
+              // Update dictionary with index information
+              if (!dictionary[url]) {
+                dictionary[url] = { source: url, targets: new Set<string>() };
+              }
+              dictionary[url].targets.add(result[i][j + 1] || "");
+            }
+            resultsWithInfo.push(arr);
+          }
+
+
+          dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
+          dispatch({ type: "SET_NODES", payload: uniquePathsWithDepth });
+          dispatch({ type: "SET_LINK_NODES", payload: dictionary });
+          dispatch({ type: "SET_RUNTIME", payload: data.runtime as number });
+          dispatch({ type: "SET_ARTICLE_COUNT", payload: data.articleCount as number });
+        },
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
+      // Handle additional logic based on the response if needed
 
-      const result = data.paths as string[][];
-
-      // Using Set to store unique URLs
-      const uniquePaths = new Set<string>();
-      result.forEach((path) => path.forEach((url) => uniquePaths.add(url)));
-
-      // Using object for the final result with URL as key
-      const uniquePathsWithInfo: Record<string, PathInfo> = {};
-
-
-      // add depth
-      const uniquePathsWithDepth: Record<string, number> = {};
-
-      for (const url of uniquePaths) {
-        const info = await fetchInfoUrl(url);
-        if (info) {
-          uniquePathsWithInfo[url] = info;
-        }
-      }
-
-      for(let i = 0; i < result.length; i++) {
-        for(let j = 0; j < result[i].length; j++) {
-          const url = result[i][j];
-          // Mapping the title 
-          if(!uniquePathsWithDepth[url])
-            {
-              uniquePathsWithDepth[url] = j;
-            }
-        }
-      }
-
-
-      let dictionary: { [key: string]: { source: string; targets: Set<string> } } = {};
-
-      // Map the result with the info using linkNodes
-      let resultsWithInfo = [];
-      for (let i = 0; i < result.length; i++) {
-        let arr = [];
-        for (let j = 0; j < result[i].length; j++) {
-          const url = result[i][j];
-          const info = uniquePathsWithInfo[url];
-          arr.push(info);
-
-          // Update dictionary with index information
-          if (!dictionary[url]) {
-            dictionary[url] = { source: url, targets: new Set<string>()};
-          }
-          dictionary[url].targets.add(result[i][j + 1] || "");
-        }
-        resultsWithInfo.push(arr);
-      }
-
-
-      dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
-      dispatch({ type: "SET_NODES", payload: uniquePathsWithDepth });
-      dispatch({ type: "SET_LINK_NODES", payload: dictionary });
-      dispatch({ type: "SET_RUNTIME", payload: data.runtime as number });
-      dispatch({ type: "SET_ARTICLE_COUNT", payload: data.articleCount as number});
     } catch (err) {
       console.error(err);
       const errMsg =
         err instanceof Error ? err.message : "Something went wrong";
       toast.error(errMsg);
     } finally {
-      toast.dismiss(loadingToast);
       setLoading(false); // Reset loading state after fetching data
     }
   };
