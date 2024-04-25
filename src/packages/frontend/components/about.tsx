@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/drawer";
 import InteractiveImage from "@/components/ui/interactive-image";
 import * as React from "react";
+import { useState, useEffect } from "react";
 
 export function DrawerAbout() {
   const [goal, setGoal] = React.useState(350);
@@ -19,12 +20,31 @@ export function DrawerAbout() {
     setGoal(Math.max(200, Math.min(400, goal + adjustment)));
   }
 
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      // Set the state to true if scrolled down by more than 50px, for instance
+      setHasScrolled(window.scrollY > 10);
+    };
+
+    // Attach the listener to the window scroll event
+    window.addEventListener("scroll", onScroll);
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Button
           variant="link"
-          className={`text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0`}
+          className={`text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0 ${
+            hasScrolled ? "hover:text-black " : "hover:text-yellow-hover"
+          }`}
         >
           About
         </Button>
@@ -49,24 +69,14 @@ export function DrawerAbout() {
                   paling sedikit.{" "}
                 </DrawerDescription>
                 <DrawerDescription>
-                  <ol>
-                    <li>
-                      Anda dapat menggunakan website WikiRace dengan cara:
-                    </li>
-                    <li>
-                      1. Masukkan judul pada input {"from"} (source) dan input{" "}
-                      {"to"} (destination)
-                    </li>
-                    <li>
-                      2. Pilih metode pencarian dengan algoritma Iterative
-                      Deepening Search (IDS) atau Breadth First Search (BFS){" "}
-                    </li>
-                    <li>3. Tekan tombol {"Go!"} untuk memulai pencarian</li>
-                    <li>
-                      4. Hasil dapat berupa tampilan box yang dapat Anda klik
-                      dan visualisasi berupa graf
-                    </li>
-                  </ol>
+                  Anda dapat menggunakan website WikiRace dengan cara: <br /> 1.
+                  Masukkan judul pada input {"from"} (source) dan input {"to"}{" "}
+                  (destination)
+                  <br /> 2. Pilih metode pencarian dengan algoritma Iterative
+                  Deepening Search (IDS) atau Breadth First Search (BFS)
+                  <br /> 3. Tekan tombol {"Go!"} untuk memulai pencarian <br />
+                  4. Hasil dapat berupa tampilan box yang dapat Anda klik dan
+                  visualisasi berupa graf
                 </DrawerDescription>
               </div>
             </div>

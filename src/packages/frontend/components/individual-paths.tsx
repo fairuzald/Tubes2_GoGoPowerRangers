@@ -17,9 +17,9 @@ const Card: React.FC<{ data: PathInfo }> = ({ data }) => {
         <Image
           src={data.image || "/default.png"}
           alt={`Picture of ${data.title}`}
-          className="rounded-l object-center object-cover"
           width={80}
           height={80}
+          className="rounded object-center object-cover w-[80px] h-[80px]"
         />
       </div>
       <div className="">
@@ -34,9 +34,9 @@ const CardGrid: React.FC<{ data: PathInfo[] }> = ({ data }) => {
   return (
     <div className="p-5 bg-blue-200 max-w-[500px] h-auto">
       <div className="flex flex-col gap-4 items-center justify-center h-full">
-        {data && data.length > 0 && data.map((card, index) => (
-          <Card key={index} data={card} />
-        ))}
+        {data &&
+          data.length > 0 &&
+          data.map((card, index) => <Card key={index} data={card} />)}
       </div>
     </div>
   );
@@ -45,18 +45,20 @@ const CardGrid: React.FC<{ data: PathInfo[] }> = ({ data }) => {
 const CardGridResult = () => {
   const { state } = useQueryContext();
   return (
-    state.result && state.result.length > 0 &&
-    <section className="flex flex-col gap-10">
-      <h3 className="text-lg lg:text-xl 2xl:text-2xl text-yellow-hover text-center font-bold">Individual paths</h3>
-      <div className="flex flex-wrap px-6 gap-6 w-full items-stretch justify-center">
-        {
-          state.result.map((path, index) => (
+    state.result &&
+    state.result.length > 0 && (
+      <section className="flex flex-col gap-10">
+        <h3 className="text-lg lg:text-xl 2xl:text-2xl text-yellow-hover text-center font-bold">
+          Individual paths
+        </h3>
+        <div className="flex flex-wrap px-6 gap-6 w-full items-stretch justify-center">
+          {state.result.map((path, index) => (
             <CardGrid key={index} data={path} />
-          ))
-        }
-      </div>
-    </section>
-  )
-}
+          ))}
+        </div>
+      </section>
+    )
+  );
+};
 
 export default CardGridResult;

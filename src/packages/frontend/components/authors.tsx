@@ -8,6 +8,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 type AuthorData = {
   name: string;
@@ -42,12 +43,31 @@ const authors: AuthorData[] = [
 ];
 
 export function Authors() {
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      // Set the state to true if scrolled down by more than 50px, for instance
+      setHasScrolled(window.scrollY > 10);
+    };
+
+    // Attach the listener to the window scroll event
+    window.addEventListener("scroll", onScroll);
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Button
           variant="link"
-          className="text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0"
+          className={`text-xl cursor-pointer hover:font-bold shadow-none hover:shadow-lg p-0 ${
+            hasScrolled ? "hover:text-black " : "hover:text-yellow-hover"
+          }`}
         >
           Authors
         </Button>

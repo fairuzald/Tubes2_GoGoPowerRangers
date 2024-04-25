@@ -24,8 +24,8 @@ export default function Home() {
             src="/wikirace.png"
             alt="logo wikirace"
             width={400}
-            height={200}
-            className="mx-auto"
+            height={127}
+            className="mx-auto w-[400px] h-[127px]"
             priority
           />
           <h1 className="text-center text-3xl font-bold mt-6">
@@ -38,9 +38,9 @@ export default function Home() {
 
         {/* Submit button */}
         <SwitchAPIReq />
-        
+
         {/* Bonus: Graph Visualization */}
-        <ForceGraph/>
+        <ForceGraph />
 
         {/* Grid Result Card */}
         <CardGridResult />
@@ -51,7 +51,8 @@ export default function Home() {
 
 export const metadata: Metadata = {
   title: "Wikirace | Go Go Power Rangers!",
-  description: "Find the shortest paths from source to destination on Wikipedia using BFS and IDS algorithms.",
+  description:
+    "Find the shortest paths from source to destination on Wikipedia using BFS and IDS algorithms.",
   generator: "Next.js",
   keywords: ["wikirace", "wikipedia", "bfs", "ids", "shortest path"],
   applicationName: "Wikirace",
