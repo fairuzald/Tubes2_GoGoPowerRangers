@@ -14,7 +14,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { GraphLinks, useQueryContext } from "./query-provider";
 
 export type CustomType = "primary" | "secondary";
-const colors = ["#eb9834", "#3489eb", "#5634eb", "#5634eb", "#34eb46", "#4334eb"]
+const colors = [
+  "#eb9834",
+  "#3489eb",
+  "#5634eb",
+  "#5634eb",
+  "#34eb46",
+  "#4334eb",
+];
 
 export interface CustomNode extends GraphNode<CustomType> {
   radius: number;
@@ -54,6 +61,9 @@ const ForceGraph: React.FC = () => {
     const nodes: Record<string, CustomNode> = {};
     Object.keys(state.nodes).forEach((nodeId: string) => {
       const depth = state.nodes[nodeId];
+      let title = decodeURIComponent(nodeId)
+        .replace("https://en.wikipedia.org/wiki/", "")
+        .replace(/_/g, " ");
       const nodeGraph = defineNode<CustomType, CustomNode>({
         id: nodeId,
         type: "primary",
@@ -62,12 +72,12 @@ const ForceGraph: React.FC = () => {
           nodeId === state.selectedSource
             ? "#eb3a23"
             : nodeId === state.selectedDestination
-              ? "#0c5925"
-              : colors[depth % colors.length],
+            ? "#0c5925"
+            : colors[depth % colors.length],
         label: {
           color: "black",
           fontSize: "1rem",
-          text: nodeId,
+          text: title,
         },
         radius: 20,
       });
@@ -80,7 +90,12 @@ const ForceGraph: React.FC = () => {
       const { source, targets } = link;
       targets.forEach((dest) => {
         if (nodes[source] && nodes[dest]) {
-          const link = defineLink<CustomType, CustomNode, CustomNode, CustomLink>({
+          const link = defineLink<
+            CustomType,
+            CustomNode,
+            CustomNode,
+            CustomLink
+          >({
             source: nodes[source],
             target: nodes[dest],
             color: "black",
@@ -118,36 +133,62 @@ const ForceGraph: React.FC = () => {
   }, [state]);
 
   return (
-    Boolean(state.selectedSource) && Boolean(state.selectedDestination) && Boolean(state.nodes) && Boolean(state.result.length > 0) && (
+    Boolean(state.selectedSource) &&
+    Boolean(state.selectedDestination) &&
+    Boolean(state.nodes) &&
+    Boolean(state.result.length > 0) && (
       <>
-        <div >
-          {state.runtime !== undefined && state.articleCount !== undefined &&
+        <div>
+          {state.runtime !== undefined && state.articleCount !== undefined && (
             <p className="text-white text-center text-lg: lg:text-xl 2xl:text-2xl max-w-[1000px]">
-              Found {" "}
-              <span className="text-yellow-hover font-bold">{state.result.length} {state.result.length > 1 ? "paths" : "path"}</span>
-              {" "}with{" "}
-              <span className="text-yellow-hover font-bold">{state.result[0].length - 1} {state.result[0].length > 1 ? "degrees" : "degree"} of separation</span>
-              {" "}  from{" "}
-              <Link href={state.selectedSource} className="text-yellow-hover font-bold hover:underline hover:underline-offset-4">{state.source}</Link>
-              {" "} to{" "}
-              <Link href={state.selectedDestination} className="text-yellow-hover font-bold hover:underline hover:underline-offset-4">{state.destination}</Link>
-              {" "} in{" "}
-              <span className="text-yellow-hover font-bold">{state.runtime*1000} miliseconds</span> runtime with <span className="text-yellow-hover font-bold">{state.articleCount} articles checked</span>
-              {" "} and through {" "}
-              <span className="text-yellow-hover font-bold">{(state.result[0].length-1)*state.result.length} articles</span>
-
+              Found{" "}
+              <span className="text-yellow-hover font-bold">
+                {state.result.length}{" "}
+                {state.result.length > 1 ? "paths" : "path"}
+              </span>{" "}
+              with{" "}
+              <span className="text-yellow-hover font-bold">
+                {state.result[0].length - 1}{" "}
+                {state.result[0].length > 1 ? "degrees" : "degree"} of
+                separation
+              </span>{" "}
+              from{" "}
+              <Link
+                href={state.selectedSource}
+                className="text-yellow-hover font-bold hover:underline hover:underline-offset-4"
+              >
+                {state.source}
+              </Link>{" "}
+              to{" "}
+              <Link
+                href={state.selectedDestination}
+                className="text-yellow-hover font-bold hover:underline hover:underline-offset-4"
+              >
+                {state.destination}
+              </Link>{" "}
+              in{" "}
+              <span className="text-yellow-hover font-bold">
+                {state.runtime * 1000} miliseconds
+              </span>{" "}
+              runtime with{" "}
+              <span className="text-yellow-hover font-bold">
+                {state.articleCount} articles checked
+              </span>{" "}
+              and through{" "}
+              <span className="text-yellow-hover font-bold">
+                {(state.result[0].length - 1) * state.result.length} articles
+              </span>
             </p>
-          }
-
+          )}
         </div>
         <div
           ref={graphWrapperRef}
-          style={{ width: "80%", height: "650px", }}
+          style={{ width: "80%", height: "650px" }}
           className="bg-white rounded-2xl border-4 border-yellow-primary"
         />
       </>
     )
-  )
+  );
 };
 
 export default ForceGraph;
