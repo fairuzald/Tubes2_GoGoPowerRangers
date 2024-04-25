@@ -231,5 +231,5 @@ const ForceGraph: React.FC = () => {
     )
   );
 };
-
+ 
 export default ForceGraph;
