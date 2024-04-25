@@ -20,7 +20,7 @@ func main() {
 	r.Run()
 	defer func() {
 		if err := handlers.SaveCacheToJSON("cache.json"); err != nil {
-			fmt.Println("Error saving cache to CSV:", err)
+			fmt.Println("Error saving cache to JSON:", err)
 		}
 	}()
 }

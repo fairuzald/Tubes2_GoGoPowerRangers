@@ -6,18 +6,18 @@ const InteractiveImage: React.FC = () => {
   return (
     <TransformWrapper>
       {({ resetTransform }) => (
-        <div className="relative w-3/4">
+        <div className="relative">
           {/* Ensures the container is full width and height for the transform component */}
           <TransformComponent>
             <Image
               src="/graph.png"
               alt="WikiRace"
-              className="w-[360px] h-auto"
               width={1116}
               height={900}
+              className="w-[200px] lg:w-[1000px] h-auto"
             />
           </TransformComponent>
-          <div className="absolute top-4 left-4 flex gap-2">
+          <div className="absolute top-2 left-2 lg:top-4 lg:left-4 flex gap-2">
             {/* Position the button absolutely within the relative container */}
             <button onClick={() => resetTransform()}>
               <Image
@@ -25,7 +25,7 @@ const InteractiveImage: React.FC = () => {
                 alt="Refresh Page"
                 width={35}
                 height={35}
-                className="rotate-45"
+                className="w-[30px] lg:w-[35px] rotate-45"
               />
             </button>
           </div>

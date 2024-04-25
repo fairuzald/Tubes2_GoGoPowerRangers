@@ -55,7 +55,7 @@ export function DrawerAbout() {
             <DrawerTitle>
               Pemanfaatan Algoritma IDS dan BFS dalam Permainan WikiRace
             </DrawerTitle>
-            <div className="flex flex-row my-4 gap-4">
+            <div className="flex flex-col items-center lg:flex-row my-4 gap-4">
               <InteractiveImage />
               <div className="flex flex-col gap-4">
                 <DrawerDescription>
@@ -70,20 +70,21 @@ export function DrawerAbout() {
                 </DrawerDescription>
                 <DrawerDescription>
                   Anda dapat menggunakan website WikiRace dengan cara: <br /> 1.
-                  Masukkan judul pada input {"from"} (source) dan input {"to"}{" "}
-                  (destination)
+                  Masukkan judul pada source dan destination
                   <br /> 2. Pilih metode pencarian dengan algoritma Iterative
                   Deepening Search (IDS) atau Breadth First Search (BFS)
                   <br /> 3. Tekan tombol {"Go!"} untuk memulai pencarian <br />
-                  4. Hasil dapat berupa tampilan box yang dapat Anda klik dan
-                  visualisasi berupa graf
+                  4. Hasil berupa tampilan box dan visualisasi berupa graf
                 </DrawerDescription>
               </div>
             </div>
           </DrawerHeader>
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button variant="outline" className="text-lg">
+              <Button
+                variant="outline"
+                className="text-lg hover:bg-white hover:text-yellow-primary"
+              >
                 Back
               </Button>
             </DrawerClose>

@@ -10,7 +10,7 @@ const Card: React.FC<{ data: PathInfo }> = ({ data }) => {
     <Link
       href={data.url || "/"}
       target="_blank"
-      className={`container flex gap-5 px-3 py-3 flex-row items-center rounded overflow-hidden shadow-lg bg-white hover:bg-gray-200 hover:cursor-pointer hover:shadow-2xl transition-shadow duration-200`}
+      className={`container flex flex-col lg:flex-row gap-5 px-3 py-3 items-center rounded overflow-hidden shadow-lg bg-white hover:bg-gray-200 hover:cursor-pointer hover:shadow-2xl transition-shadow duration-200`}
     >
       <div>
         {/* Adjust the height as needed */}

@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center px-24 py-14 w-full bg-[#141414] relative z-10">
+    <main className="flex min-h-screen flex-col items-center px-8 lg:px-24 py-14 w-full bg-[#14213d] relative z-10">
       {/* Video background */}
       <video
         className="absolute inset-0 w-full h-full object-cover -z-10"
@@ -21,11 +21,11 @@ export default function Home() {
         {/* Main title section */}
         <section className="container mx-auto">
           <Image
-            src="/wikirace.png"
+            src="/wiki.png"
             alt="logo wikirace"
             width={400}
             height={127}
-            className="mx-auto w-[400px] h-[127px]"
+            className="mx-auto object-cover object-center lg:w-[400px] lg:h-[127px]"
             priority
           />
           <h1 className="text-center text-3xl font-bold mt-6">

@@ -12,6 +12,8 @@ import "d3-graph-controller/default.css";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { GraphLinks, useQueryContext } from "./query-provider";
+import { Button } from "./ui/button";
+import toast from "react-hot-toast";
 
 export type CustomType = "primary" | "secondary";
 const colors = [
@@ -48,12 +50,17 @@ const config = defineGraphConfig<CustomType, CustomNode, CustomLink>({
 const ForceGraph: React.FC = () => {
   const graphWrapperRef = useRef<HTMLDivElement>(null);
   const { state } = useQueryContext();
-  console.log(state);
   const [controller, setController] = useState<GraphController<
     CustomType,
     CustomNode,
     CustomLink
   > | null>(null);
+
+  const formatTitleFromURL = (url: string): string => {
+    return decodeURIComponent(url)
+      .replace("https://en.wikipedia.org/wiki/", "")
+      .replace(/_/g, " ");
+  };
 
   useEffect(() => {
     if (!graphWrapperRef.current || !state) return;
@@ -104,7 +111,7 @@ const ForceGraph: React.FC = () => {
               fontSize: "0.5rem",
               text: "",
             },
-            length: 500,
+            length: 300,
           });
 
           linkNodes.push(link);
@@ -132,6 +139,29 @@ const ForceGraph: React.FC = () => {
     };
   }, [state]);
 
+  const handleSave = async () => {
+    if (state.result.length <= 0) {
+      return;
+    }
+
+    try {
+      await fetch("/api/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          source: state.selectedSource,
+          destination: state.selectedDestination,
+          paths: state.result,
+        }),
+      });
+      toast.success("Data saved successfully!");
+    } catch (error) {
+      toast.error("Failed to save data!");
+    }
+  };
+
   return (
     Boolean(state.selectedSource) &&
     Boolean(state.selectedDestination) &&
@@ -157,14 +187,14 @@ const ForceGraph: React.FC = () => {
                 href={state.selectedSource}
                 className="text-yellow-hover font-bold hover:underline hover:underline-offset-4"
               >
-                {state.source}
+                {formatTitleFromURL(state.selectedSource)}
               </Link>{" "}
               to{" "}
               <Link
                 href={state.selectedDestination}
                 className="text-yellow-hover font-bold hover:underline hover:underline-offset-4"
               >
-                {state.destination}
+                {formatTitleFromURL(state.selectedDestination)}
               </Link>{" "}
               in{" "}
               <span className="text-yellow-hover font-bold">
@@ -181,14 +211,25 @@ const ForceGraph: React.FC = () => {
             </p>
           )}
         </div>
+
+        {process.env.NODE_ENV == "development" && (
+          <Button
+            size={"lg"}
+            className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        )}
+
         <div
           ref={graphWrapperRef}
-          style={{ width: "80%", height: "650px" }}
+          style={{ width: "85%", height: "50vw" }}
           className="bg-white rounded-2xl border-4 border-yellow-primary"
         />
       </>
     )
   );
 };
-
+ 
 export default ForceGraph;
