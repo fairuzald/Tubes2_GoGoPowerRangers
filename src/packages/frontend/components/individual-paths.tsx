@@ -7,9 +7,8 @@ import { useQueryContext } from "./query-provider";
 
 const Card: React.FC<{ data: PathInfo }> = ({ data }) => {
   return (
-    data.url &&
     <Link
-      href={data.url}
+      href={data.url || "/"}
       target="_blank"
       className={`container flex gap-5 px-3 py-3 flex-row items-center rounded overflow-hidden shadow-lg bg-white hover:bg-gray-200 hover:cursor-pointer hover:shadow-2xl transition-shadow duration-200`}
     >
