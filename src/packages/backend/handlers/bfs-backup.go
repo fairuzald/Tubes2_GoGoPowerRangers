@@ -110,7 +110,7 @@ func BFSHTTPHandlerBackup(c *gin.Context) {
 	if queryParams == "single" {
 		paths, count, err = BFSHandlersSingleBackup(reqBody.Source, reqBody.Destination, 6)
 	} else {
-		paths, count, err = BFSHandlersSingle(reqBody.Source, reqBody.Destination, 6)
+		paths, count, err = BFSHandlersBackup(reqBody.Source, reqBody.Destination, 6)
 	}
 
 	// Calculate runtime
