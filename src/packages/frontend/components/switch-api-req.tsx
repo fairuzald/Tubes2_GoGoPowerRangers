@@ -73,16 +73,14 @@ const SwitchAPIReq = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        loadingMessage: "",
-        successMessage: "",
+        loadingMessage: "Saving...",
+        successMessage: "Data saved successfully!",
         body: JSON.stringify({
           source: state.selectedSource,
           destination: state.selectedDestination,
           paths: state.result,
         }),
-        onSuccess: () => {
-          toast.success("Data saved successfully!");
-        },
+        onSuccess: () => {},
       });
     } catch (error) {
       toast.error("Failed to save data!");
