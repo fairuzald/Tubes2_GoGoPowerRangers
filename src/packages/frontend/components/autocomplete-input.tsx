@@ -95,7 +95,7 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
               onClick={() => handleItemClick(item)}
               onKeyDown={(e) => e.key === "Enter" && handleItemClick(item)}
               className={cn(
-                "flex items-center gap-5 px-6 py-4 hover:bg-zinc-200 hover:cursor-pointer",
+                "flex items-center gap-5 px-6 py-4 hover:bg-zinc-200 hover:cursor-pointer break-all",
                 selected === item.title && "bg-slate-100"
               )}
             >

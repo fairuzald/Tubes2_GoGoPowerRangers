@@ -1,5 +1,4 @@
 "use client";
-import { makeApiRequest } from "@/libs/helper";
 import {
   defineGraph,
   defineGraphConfig,
@@ -12,15 +11,13 @@ import {
 import "d3-graph-controller/default.css";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { GraphLinks, useQueryContext } from "./query-provider";
-import { Button } from "./ui/button";
 
 export type CustomType = "primary" | "secondary";
 const colors = [
   "#eb9834",
   "#3489eb",
-  "#5634eb",
+  "#fc03fc",
   "#5634eb",
   "#34eb46",
   "#4334eb",
