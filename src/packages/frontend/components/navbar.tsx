@@ -39,8 +39,8 @@ const Navbar: React.FC<NavbarProps> = ({ expandNavbar, setExpandNavbar }) => {
 
   return (
     <nav
-      className={`fixed left-0 right-0 top-0 flex justify-between items-center z-30 w-full py-3 lg:py-5 px-7 lg:px-10 xl:px-16 2xl:px-10 text-base lg:text-xl font-semibold lg:${
-        hasScrolled ? "bg-yellow-primary lg:bg-opacity-90" : "bg-transparent"
+      className={`fixed left-0 right-0 top-0 flex justify-between items-center z-30 w-full py-3 lg:py-5 px-7 lg:px-10 xl:px-16 2xl:px-10 text-base lg:text-xl font-semibold bg-yellow-primary bg-opacity-0 ${
+        hasScrolled ? "lg:bg-opacity-90" : "bg-transparent"
       }`}
     >
       {/* Hamburger button to popUp menu on mobile  */}
