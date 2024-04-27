@@ -140,7 +140,7 @@ Project is complete
 .
 └── Tubes2_GoGoPowerRangers
    ├── doc
-   │ └── Tucil2_13522010_13522042.pdf
+   │ └── GoGoPowerRangers.pdf
    |
    ├── src
    │ ├── node_modules
