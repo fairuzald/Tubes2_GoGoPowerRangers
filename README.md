@@ -22,7 +22,8 @@ WikiRace or Wiki Game is a game that involves Wikipedia, a free online encyclope
 |   2.    |               Program menyediakan pencarian dengan algoritma Breadth First Search (BFS)               |   ✓    |           |
 |   3.    | (Bonus) Program dapat menampilkan seluruh rute terpendek (tidak hanya satu) dan memvisualisasikannya. |   ✓    |           |
 |   4.    |           (Bonus) Program dijalankan menggunakan Docker baik untuk frontend maupun backend.           |   ✓    |           |
-|   5.    |                                        (Bonus) Video kelompok.                                        |   ✓    |           |
+|   5.    |                     (Bonus) Rute terpendek dengan durasi kurang dari satu menit.                      |   ✓    |           |
+|   6.    |                                        (Bonus) Video kelompok.                                        |   ✓    |           |
 
 ## Getting Started
 

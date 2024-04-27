@@ -29,7 +29,7 @@ const fetchInfoUrl = async (url: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        url
+        url,
       }),
       loadingMessage: "Fetching data...",
       successMessage: "Data fetched successfully!",
@@ -41,8 +41,6 @@ const fetchInfoUrl = async (url: string) => {
     });
 
     return datas;
-
-
   } catch (err) {
     console.error(err);
     const errMsg = err instanceof Error ? err.message : "Something went wrong";
@@ -60,7 +58,36 @@ interface ApiResponse {
 const SwitchAPIReq = () => {
   const { state, dispatch } = useQueryContext();
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
+  const handleSave = async () => {
+    if (state.result.length <= 0) {
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await makeApiRequest({
+        endpoint: "/save",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        loadingMessage: "Saving...",
+        successMessage: "Data saved successfully!",
+        body: JSON.stringify({
+          source: state.selectedSource,
+          destination: state.selectedDestination,
+          paths: state.result,
+        }),
+        onSuccess: () => { },
+      });
+    } catch (error) {
+      toast.error("Failed to save data!");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const onSubmit = async () => {
     // Validation check
@@ -71,9 +98,10 @@ const SwitchAPIReq = () => {
     setLoading(true);
     try {
       const url = !state.isBFS ? "/ids" : "/bfs";
+      const singleUrl = state.bonus ? url : url + "?method=single"
       await makeApiRequest({
         method: "POST",
-        endpoint: url,
+        endpoint: singleUrl,
         headers: {
           "Content-Type": "application/json",
         },
@@ -81,7 +109,10 @@ const SwitchAPIReq = () => {
           source: state.selectedSource,
           destination: state.selectedDestination,
         }),
-        loadingMessage: "Finding sortest path using "+ (state.isBFS ? "BFS" : "IDS") + " algorithm...",
+        loadingMessage:
+          "Finding shortest path using " +
+          (state.isBFS ? "BFS" : "IDS") +
+          " algorithm...",
         successMessage: "Process completed successfully!",
         onSuccess: async (data: ApiResponse) => {
           const result = data.paths as string[][];
@@ -92,7 +123,6 @@ const SwitchAPIReq = () => {
 
           // Using object for the final result with URL as key
           const uniquePathsWithInfo: Record<string, PathInfo> = {};
-
 
           // add depth
           const uniquePathsWithDepth: Record<string, number> = {};
@@ -105,19 +135,19 @@ const SwitchAPIReq = () => {
           }
           toast.dismiss(toastId);
 
-
           for (let i = 0; i < result.length; i++) {
             for (let j = 0; j < result[i].length; j++) {
               const url = result[i][j];
-              // Mapping the title 
+              // Mapping the title
               if (!uniquePathsWithDepth[url]) {
                 uniquePathsWithDepth[url] = j;
               }
             }
           }
 
-
-          let dictionary: { [key: string]: { source: string; targets: Set<string> } } = {};
+          let dictionary: {
+            [key: string]: { source: string; targets: Set<string> };
+          } = {};
 
           // Map the result with the info using linkNodes
           let resultsWithInfo = [];
@@ -137,46 +167,65 @@ const SwitchAPIReq = () => {
             resultsWithInfo.push(arr);
           }
 
-
           dispatch({ type: "SET_RESULT", payload: resultsWithInfo });
           dispatch({ type: "SET_NODES", payload: uniquePathsWithDepth });
           dispatch({ type: "SET_LINK_NODES", payload: dictionary });
           dispatch({ type: "SET_RUNTIME", payload: data.runtime as number });
-          dispatch({ type: "SET_ARTICLE_COUNT", payload: data.articleCount as number });
+          dispatch({
+            type: "SET_ARTICLE_COUNT",
+            payload: data.articleCount as number,
+          });
         },
       });
 
       // Handle additional logic based on the response if needed
-
     } catch (err) {
       console.error(err);
       const errMsg =
         err instanceof Error ? err.message : "Something went wrong";
       toast.error(errMsg);
     } finally {
-      setLoading(false); // Reset loading state after fetching data
+      setLoading(false);
     }
+  };
+
+  const handleOperations = async () => {
+    await onSubmit();
+    await handleSave();
   };
 
   return (
     <section className="flex flex-col gap-5">
       <div className="flex items-center justify-center gap-4">
+        <span className="font-montserrat text-[21px] font-semibold">Single Solution</span>
+        <Switch
+          className="bg-white"
+          checked={state.bonus}
+          onCheckedChange={(checked) =>
+            dispatch({ type: "SET_BONUS", payload: checked })
+          }
+        />
+        <span className="font-montserrat text-[21px] font-semibold">Multiple Solution</span>
+      </div>
+
+      <div className="flex items-center justify-center gap-4">
         <span className="font-montserrat text-[21px] font-semibold">IDS</span>
         <Switch
           className="bg-white"
           checked={state.isBFS}
-          onCheckedChange={(checked) => dispatch({ type: "SET_ISBFS", payload: checked })}
+          onCheckedChange={(checked) =>
+            dispatch({ type: "SET_ISBFS", payload: checked })
+          }
         />
-        <span className="font-montserrat text-[21px] font-semibold">
-          BFS
-        </span>
+        <span className="font-montserrat text-[21px] font-semibold">BFS</span>
       </div>
 
-      {/* Submit button */}
+
+
       <Button
         size={"lg"}
         className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
-        onClick={onSubmit}
+        onClick={handleOperations}
         disabled={loading}
       >
         {loading ? "Loading..." : "Go!"}

@@ -4,7 +4,6 @@ import (
 	"backend/handlers"
 	"backend/router"
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +13,6 @@ func main() {
 	r := router.SetupRouter()
 
 	r.Use(CORSMiddleware())
-
-	http.ListenAndServe("127.0.0.1:8080", r)
 
 	r.Run()
 	defer func() {

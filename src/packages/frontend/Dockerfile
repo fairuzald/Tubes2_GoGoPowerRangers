@@ -13,7 +13,7 @@ RUN npm install
 # Copy the rest of the frontend application
 COPY . .
 
-# Build the frontend (if needed)
+# Build the frontend 
 RUN npm run build
 
 # Expose the port used by the frontend application

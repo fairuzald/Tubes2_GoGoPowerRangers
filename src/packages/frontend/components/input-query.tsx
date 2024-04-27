@@ -25,7 +25,6 @@ export default function InputQuery() {
     setDestinationData(temp);
     setIsSwapped(!isSwapped);
   };
-  console.log(state);
 
   return (
     <section className="flex flex-col lg:flex-row gap-7 w-full max-w-[1500px] items-center justify-center">
