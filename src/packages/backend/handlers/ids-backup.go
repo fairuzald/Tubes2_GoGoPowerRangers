@@ -89,7 +89,7 @@ func IDSHTTPHandlerBackup(c *gin.Context) {
 	var paths [][]string
 	var err error
 	var count int
-	paths, count, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
+	paths, count, err = IDSHadlersBackup(reqBody.Source, reqBody.Destination, 6)
 
 	endTime := time.Now()
 	runtime := endTime.Sub(startTime).Seconds()

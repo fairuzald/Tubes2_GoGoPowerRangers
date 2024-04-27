@@ -53,11 +53,16 @@ func BFSHandlersSingle(source string, destination string, maxDepth int) ([][]str
 					close(done)
 					return
 				} else if !found {
-					links, err := ScrapperHandlerLinkBuffer(current)
-					if err != nil {
-						// Handle error
-						fmt.Println(err)
-						return // Return to avoid deadlock
+					links, ok := GetLinksFromCache(current)
+					if !ok || links == nil || len(links) == 0 {
+						links2, err := ScrapperHandlerLinkBuffer(current)
+						if err != nil {
+							// Handle error and return to avoid deadlock
+							fmt.Println(err)
+							return
+						}
+						SetLinksToCache(current, links2) // Update cache with fetched links
+						links = links2
 					}
 					visitedMutex.Lock()
 					for _, link := range links {
@@ -165,18 +170,23 @@ func BFSHandlersSingleBackup(source string, destination string, maxDepth int) ([
 					// fmt.Println("Goroutine started for node:", currentNode)
 
 					// Get links from the current node
-
-					links, err := ScrapperHandlerLinkBuffer(currentNode)
-					if err != nil {
-						// Handle error
-						fmt.Println(err)
-						return // Return to avoid deadlock
+					links, ok := GetLinksFromCache(currentNode)
+					if !ok || links == nil || len(links) == 0 {
+						links2, err := ScrapperHandlerLinkBuffer(currentNode)
+						if err != nil {
+							// Handle error and return to avoid deadlock
+							fmt.Println(err)
+							return
+						}
+						SetLinksToCache(currentNode, links2) // Update cache with fetched links
+						links = links2
 					}
 
 					mutex.Lock()
 					defer mutex.Unlock()
 					for _, link := range links {
 						if _, ok := visited[link]; !ok {
+							visited[link] = struct{}{}
 							// Create a new path by appending the link to the current path
 							newPath := append([]string(nil), path...)
 							newPath = append(newPath, link)

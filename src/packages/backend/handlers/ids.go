@@ -109,22 +109,31 @@ func IDSHTTPHandler(c *gin.Context) {
 		return
 	}
 
+	queryParams := c.Query("method")
+
 	var paths [][]string
 	var err error
 	var count int
-	paths, count, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
 
-	endTime := time.Now()                       // Record the end time
-	runtime := endTime.Sub(startTime).Seconds() // Calculate runtime
+	// Measure runtime and set tes accordingly
+	if queryParams == "single" {
+		paths, count, err = IDSHadlersBackupSingle(reqBody.Source, reqBody.Destination, 6)
+	} else {
+		paths, count, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
+	}
+
+	// Calculate runtime
+	endTime := time.Now()
+	runtime := endTime.Sub(startTime).Seconds()
 
 	if err != nil {
-		fmt.Print(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform IDS algorithm"})
+		fmt.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform BFS algorithm"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":      "Data received",
+		"message":      "Data diterima",
 		"paths":        paths,
 		"runtime":      runtime,
 		"articleCount": count,
