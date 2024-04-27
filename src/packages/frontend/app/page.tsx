@@ -6,7 +6,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 
 export default function Home() {
-  console.log(process.env.NODE_ENV)
   return (
     <main className="flex min-h-screen flex-col items-center px-8 lg:px-24 py-14 w-full bg-[#14213d] relative z-10">
       {/* Video background */}
