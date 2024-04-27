@@ -8,12 +8,15 @@ WORKDIR /app/packages/frontend
 COPY package*.json ./
 
 # Install dependencies for frontend
-RUN npm install
+RUN npm install sharp
 
 # Copy the rest of the frontend application
 COPY . .
 
-# Build the frontend (if needed)
+ENV NODE_ENV=development
+ENV NEXT_API_URL=http://backend-container:8080
+
+# Build the frontend 
 RUN npm run build
 
 # Expose the port used by the frontend application

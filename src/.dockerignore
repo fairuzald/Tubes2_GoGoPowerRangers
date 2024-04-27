@@ -1,6 +1,7 @@
 # Ignore node_modules directory for frontend
 /packages/frontend/node_modules
 /packages/frontend/.next
+/packages/frontend/.env
 
 # Ignore binary files and build artifacts for backend
 /packages/backend/*.exe

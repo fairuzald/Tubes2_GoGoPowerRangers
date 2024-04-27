@@ -23,4 +23,4 @@ LABEL maintainer="GoGoPowerRangers"
 LABEL description="This is a backend Docker image for application."
 
 # Start the backend server
-CMD ["./main"]
+CMD ["go run main.go"]

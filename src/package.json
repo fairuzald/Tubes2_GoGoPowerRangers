@@ -4,10 +4,14 @@
     "packages/*"
   ],
   "scripts": {
-    "install": "(cd packages/frontend && npm install) && (cd packages/backend && go get)",
+    "install:frontend": "cd packages/frontend && npm install",
+    "install:backend": "cd packages/backend && go get",
+    "install-all": "npm install && npm run install:frontend && npm run install:backend",
     "build": "(cd packages/frontend && npm run build)",
+    "connect-network": "docker network create stima && docker network connect stima frontend-container && docker network connect stima backend-container",
     "start:backend": "cd packages/backend && go run ./main.go",
-    "start": "npm run support && concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:frontend": "cd packages/frontend && npm run start",
+    "start": "npm run support && npm run connect-network && concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "dev:backend": "cd packages/backend && go run ./main.go",
     "dev:frontend": "cd packages/frontend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
