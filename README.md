@@ -1,6 +1,21 @@
+# WikiRace Application
+
+<p align="center">
+  <a href="https://tubes2-go-go-power-rangers.vercel.app/">
+    <h3 align="center">WikiRace Application</h3>
+  </a>
+</p>
+
+<p align="center">Next.js boilerplate that uses <a href="https://pkg.go.dev/github.com/gin-gonic/gin/">GIN</a> as the API backend.</p>
+
+<br/>
+
+
+
 ## Table of Contents
 
 - [General Information](#general-information)
+- [Demo](#demo)
 - [Features](#features)
 - [Getting Started](#getting-started)
 - [Learn More](#learn-more)
@@ -14,6 +29,10 @@ WikiRace or Wiki Game is a game that involves Wikipedia, a free online encyclope
 
 ![Example screenshot](https://miro.medium.com/v2/resize:fit:640/format:webp/1*NwVK37pwD5dHFNBfevfo1w.png)
 
+## Demo
+
+Check out the live demo: [Wiki Race Demo](https://tubes2-go-go-power-rangers.vercel.app)
+
 ## Features
 
 | **No.** |                                               **Poin**                                                | **Ya** | **Tidak** |
@@ -25,11 +44,44 @@ WikiRace or Wiki Game is a game that involves Wikipedia, a free online encyclope
 |   5.    |                     (Bonus) Rute terpendek dengan durasi kurang dari satu menit.                      |   ✓    |           |
 |   6.    |                                        (Bonus) Video kelompok.                                        |   ✓    |           |
 
-## Getting Started
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Development
 
-First, run the development server:
+To run the application locally:
+
+### Prerequisites
+
+Before starting the development process, make sure you have the following software installed on your machine:
+
+- [Node.js](https://nodejs.org/) (LTS version recommended)
+- [Golang](https://go.dev/) (LTS version recommended)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) (for managing JavaScript dependencies)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/fairuzald/Tubes2_GoGoPowerRangers
+cd Tubes2_GoGoPowerRangers
+```
+
+### 2. Navigate to the Source (src) Directory
+
+```bash
+cd src
+
+```
+
+### 3. Install All Frontend and Backend Dependencies
+
+```bash
+npm run install-all
+# or
+yarn install-all
+# or
+pnpm install-all
+```
+
+### 4. Run Next.js Development Server
 
 ```bash
 npm run dev
@@ -37,30 +89,42 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 5: Open your browser and navigate to
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Client-side is running on [localhost:3000](http://localhost:3000), and the server is on [localhost:8080](http://localhost:8080).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+To run the application using docker:
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Clone the Repository
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+git clone https://github.com/fairuzald/Tubes2_GoGoPowerRangers
+cd Tubes2_GoGoPowerRangers
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### 2. Navigate to the Source (src) Directory
 
-## Deploy on Vercel
+```bash
+cd src
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 3. Buld and run with docker
+
+```bash
+npm run start
+# or
+yarn start
+# or
+pnpm start
+```
+## Project Status
+
+Project is complete
+
 
 ## Team Members
 
