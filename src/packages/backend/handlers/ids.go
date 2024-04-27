@@ -118,6 +118,8 @@ func IDSHTTPHandler(c *gin.Context) {
 	// Measure runtime and set tes accordingly
 	if queryParams == "single" {
 		paths, count, err = IDSHadlersBackupSingle(reqBody.Source, reqBody.Destination, 6)
+	} else if queryParams == "multithread" {
+		paths, count, err = IDSConcurrentHadlers(reqBody.Source, reqBody.Destination, 6)
 	} else {
 		paths, count, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
 	}

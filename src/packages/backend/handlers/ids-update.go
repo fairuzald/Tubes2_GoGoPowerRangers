@@ -2,11 +2,7 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
 	"sync"
-	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 func IDSConcurrentHadlers(source string, destination string, maxDepth int) ([][]string, int, error) {
@@ -115,40 +111,4 @@ func DFSConcurrentHelper(source string, destination string, maxDepth int) ([][]s
 		paths = reconstructPath(&parents, source, destination)
 	}
 	return paths, counter, nil
-}
-
-func IDSHTTPConcurrentHandler(c *gin.Context) {
-	type ReqBody struct {
-		Source      string `json:"source"`
-		Destination string `json:"destination"`
-	}
-
-	startTime := time.Now()
-
-	var reqBody ReqBody
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
-
-	var paths [][]string
-	var err error
-	var count int
-	paths, count, err = IDSHadlers(reqBody.Source, reqBody.Destination, 6)
-
-	endTime := time.Now()
-	runtime := endTime.Sub(startTime).Seconds()
-
-	if err != nil {
-		fmt.Print(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform IDS algorithm"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":      "Data received",
-		"paths":        paths,
-		"runtime":      runtime,
-		"articleCount": count,
-	})
 }
