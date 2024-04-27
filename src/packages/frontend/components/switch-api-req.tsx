@@ -109,7 +109,7 @@ const SwitchAPIReq = () => {
           destination: state.selectedDestination,
         }),
         loadingMessage:
-          "Finding sortest path using " +
+          "Finding shortest path using " +
           (state.isBFS ? "BFS" : "IDS") +
           " algorithm...",
         successMessage: "Process completed successfully!",
@@ -207,16 +207,14 @@ const SwitchAPIReq = () => {
         <span className="font-montserrat text-[21px] font-semibold">BFS</span>
       </div>
 
-      {process.env.NODE_ENV == "development" && (
-        <Button
-          size={"lg"}
-          className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
-          onClick={handleOperations}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Go!"}
-        </Button>
-      )}
+      <Button
+        size={"lg"}
+        className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
+        onClick={handleOperations}
+        disabled={loading}
+      >
+        {loading ? "Loading..." : "Go!"}
+      </Button>
     </section>
   );
 };
