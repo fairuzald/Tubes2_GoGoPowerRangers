@@ -48,7 +48,7 @@ const initialState: State = {
   selectedDestination: '',
   result: [],
   isBFS: true,
-  bonus: false,
+  bonus: true,
   nodes: {},
   linkNodes: {},
   runtime: undefined,
