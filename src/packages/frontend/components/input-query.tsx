@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
 import AutoCompleteInput from "@/components/autocomplete-input";
 import useAutoCompleteData from "@/hooks/useAutoComplete";
 import { MoveHorizontal } from "lucide-react";
+import { useState } from "react";
 import { useQueryContext } from "./query-provider";
 
 export default function InputQuery() {
@@ -25,7 +25,7 @@ export default function InputQuery() {
     setDestinationData(temp);
     setIsSwapped(!isSwapped);
   };
-  console.log(destination, source);
+  console.log(state);
 
   return (
     <section className="flex flex-col lg:flex-row gap-7 w-full max-w-[1500px] items-center justify-center">

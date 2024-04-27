@@ -1,4 +1,5 @@
 "use client";
+import { makeApiRequest } from "@/libs/helper";
 import {
   defineGraph,
   defineGraphConfig,
@@ -11,9 +12,9 @@ import {
 import "d3-graph-controller/default.css";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { GraphLinks, useQueryContext } from "./query-provider";
 import { Button } from "./ui/button";
-import toast from "react-hot-toast";
 
 export type CustomType = "primary" | "secondary";
 const colors = [
@@ -145,18 +146,21 @@ const ForceGraph: React.FC = () => {
     }
 
     try {
-      await fetch("/api/save", {
+      await makeApiRequest({
+        endpoint: "/save",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        loadingMessage: "Saving data...",
+        successMessage: "Data saved successfully!",
         body: JSON.stringify({
           source: state.selectedSource,
           destination: state.selectedDestination,
           paths: state.result,
         }),
+        onSuccess: () => {},
       });
-      toast.success("Data saved successfully!");
     } catch (error) {
       toast.error("Failed to save data!");
     }

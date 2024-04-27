@@ -18,24 +18,31 @@ const fetchInfoUrl = async (url: string) => {
     return infoCache.get(url)!;
   }
 
+  let datas = null;
+
   try {
-    const response = await fetch("/api/url-info", {
+    await makeApiRequest({
+      isToast: false,
+      method: "POST",
+      endpoint: "/url-info",
       headers: {
         "Content-Type": "application/json",
       },
-      method: "POST",
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({
+        url
+      }),
+      loadingMessage: "Fetching data...",
+      successMessage: "Data fetched successfully!",
+      onSuccess(data: any) {
+        const dataInfo = data.data as PathInfo;
+        infoCache.set(url, dataInfo as PathInfo);
+        datas = dataInfo;
+      },
     });
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Something went wrong");
-    }
+    return datas;
 
-    const info = data.data;
-    infoCache.set(url, info);
 
-    return info;
   } catch (err) {
     console.error(err);
     const errMsg = err instanceof Error ? err.message : "Something went wrong";
@@ -63,7 +70,7 @@ const SwitchAPIReq = () => {
     }
     setLoading(true);
     try {
-      const url = !state.isBFS ? "/api/ids" : "/api/bfs";
+      const url = !state.isBFS ? "/ids" : "/bfs";
       await makeApiRequest({
         method: "POST",
         endpoint: url,
@@ -74,9 +81,9 @@ const SwitchAPIReq = () => {
           source: state.selectedSource,
           destination: state.selectedDestination,
         }),
-        loadingMessage: "Fetching data...",
-        successMessage: "Data fetched successfully!",
-        onSuccess: async (data:ApiResponse) => {
+        loadingMessage: "Finding sortest path using "+ (state.isBFS ? "BFS" : "IDS") + " algorithm...",
+        successMessage: "Process completed successfully!",
+        onSuccess: async (data: ApiResponse) => {
           const result = data.paths as string[][];
 
           // Using Set to store unique URLs
@@ -89,13 +96,15 @@ const SwitchAPIReq = () => {
 
           // add depth
           const uniquePathsWithDepth: Record<string, number> = {};
-
+          const toastId = toast.loading("Fetching data info...");
           for (const url of uniquePaths) {
             const info = await fetchInfoUrl(url);
             if (info) {
               uniquePathsWithInfo[url] = info;
             }
           }
+          toast.dismiss(toastId);
+
 
           for (let i = 0; i < result.length; i++) {
             for (let j = 0; j < result[i].length; j++) {

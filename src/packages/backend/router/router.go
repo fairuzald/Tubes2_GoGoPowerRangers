@@ -15,8 +15,6 @@ func SetupRouter() *gin.Engine {
 
 	r.POST("/bfs", handlers.BFSHTTPHandler)
 	r.POST("/ids", handlers.IDSHTTPHandler)
-	r.POST("/test/bfs", handlers.BFSTestHTTPHandler)
-	r.POST("/scraping", handlers.ScrapingHandlerPost)
 	r.POST("/save", handlers.SaveCacheHandler)
 	return r
 }

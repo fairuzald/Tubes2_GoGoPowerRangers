@@ -9,14 +9,14 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center px-8 lg:px-24 py-14 w-full bg-[#14213d] relative z-10">
       {/* Video background */}
-      <video
+      {/* <video
         className="absolute inset-0 w-full h-full object-cover -z-10"
         autoPlay
         loop
         muted
       >
         <source src={"bg1.mp4"} type="video/mp4" />
-      </video>
+      </video> */}
       <div className="mt-4 flex flex-col gap-10 items-center justify-center w-full">
         {/* Main title section */}
         <section className="container mx-auto">
