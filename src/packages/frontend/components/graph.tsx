@@ -98,14 +98,15 @@ const ForceGraph: React.FC = () => {
       const { source, targets } = link;
       targets.forEach((dest) => {
         if (nodes[source] && nodes[dest]) {
+          const isSourceActualSource = state.selectedSource === source;
           const link = defineLink<
             CustomType,
             CustomNode,
             CustomNode,
             CustomLink
           >({
-            source: nodes[source],
-            target: nodes[dest],
+            source: isSourceActualSource ? nodes[source] : nodes[dest],
+            target: isSourceActualSource ? nodes[dest] : nodes[source],
             color: "black",
             label: {
               color: "#FFFFFF",
@@ -139,32 +140,6 @@ const ForceGraph: React.FC = () => {
       }
     };
   }, [state]);
-
-  const handleSave = async () => {
-    if (state.result.length <= 0) {
-      return;
-    }
-
-    try {
-      await makeApiRequest({
-        endpoint: "/save",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        loadingMessage: "Saving data...",
-        successMessage: "Data saved successfully!",
-        body: JSON.stringify({
-          source: state.selectedSource,
-          destination: state.selectedDestination,
-          paths: state.result,
-        }),
-        onSuccess: () => {},
-      });
-    } catch (error) {
-      toast.error("Failed to save data!");
-    }
-  };
 
   return (
     Boolean(state.selectedSource) &&
@@ -216,16 +191,6 @@ const ForceGraph: React.FC = () => {
           )}
         </div>
 
-        {process.env.NODE_ENV == "development" && (
-          <Button
-            size={"lg"}
-            className="text-2xl sm:text-3xl bg-yellow-primary hover:bg-yellow-hover transition ease-in-out delay-150 hover:scale-102 hover:-translate-y-1 duration-300"
-            onClick={handleSave}
-          >
-            Save
-          </Button>
-        )}
-
         <div
           ref={graphWrapperRef}
           style={{ width: "85%", height: "50vw" }}
@@ -235,5 +200,5 @@ const ForceGraph: React.FC = () => {
     )
   );
 };
- 
+
 export default ForceGraph;
