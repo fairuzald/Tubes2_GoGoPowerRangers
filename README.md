@@ -112,7 +112,7 @@ cd src
 
 ```
 
-### 3. Buld and run with docker
+### 3. Build and run with docker
 
 ```bash
 npm run start
