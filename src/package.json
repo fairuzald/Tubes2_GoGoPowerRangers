@@ -11,6 +11,7 @@
     "connect-network": "docker network create stima && docker network connect stima frontend-container && docker network connect stima backend-container",
     "start:backend": "cd packages/backend && go run ./main.go",
     "start:frontend": "cd packages/frontend && npm run start",
+    "start:local": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "start": "npm run support && npm run connect-network && concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "dev:backend": "cd packages/backend && go run ./main.go",
     "dev:frontend": "cd packages/frontend && npm run dev",
