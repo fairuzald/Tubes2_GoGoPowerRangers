@@ -56,19 +56,14 @@ export async function makeApiRequest<T>({
             error: (err) => `Processing failed: ${err.message}`,
           }
         )
-      : await fetch(
-          (process.env.NODE_ENV === "production"
-            ? process.env.NEXT_PUBLIC_API_URL
-            : "/api") + endpoint,
-          {
-            method: method,
-            headers: headers,
-            body: method !== "GET" ? body : undefined,
-            timeout: 30000000,
-            keepAlive: true,
-            noDelay: true,
-          } as ExtendedRequestInit
-        )
+      : await fetch("/api" + endpoint, {
+          method: method,
+          headers: headers,
+          body: method !== "GET" ? body : undefined,
+          timeout: 30000000,
+          keepAlive: true,
+          noDelay: true,
+        } as ExtendedRequestInit)
           .then(async (response) => {
             if (!response.ok) {
               console.log(response);
