@@ -45,19 +45,6 @@ func DFSHelper(source string, destination string, maxDepth int) ([][]string, int
 	parentsVisited := make(map[string]map[string]struct{}) // Map to track visited parents for each node
 	paths := [][]string{}                                  // Slice to store paths found
 	found, counter := false, 0                             // Flags and counter for tracking progress
-	closestDistance := make(map[string]int)
-	closestDistance[source] = 0
-	stack := []struct {
-		link  string
-		depth int
-	}{{
-		link:  source,
-		depth: 0,
-	}}
-	parents := make(map[string][]string)
-	parentsVisited := make(map[string]map[string]struct{})
-	paths := [][]string{}
-	found, counter := false, 0
 
 	for len(stack) > 0 {
 		current := stack[len(stack)-1] // Get the top element from the stack
@@ -70,21 +57,13 @@ func DFSHelper(source string, destination string, maxDepth int) ([][]string, int
 			counter++ // Increment the counter for node processing
 
 			// Fetch links for the current node if not cached
-		current := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		if current.link == destination {
-			found = true
-			continue
-		} else if current.depth < maxDepth {
-			counter++
 			var links []string
 			var err error
-			links, ok := GetLinksFromCache(current.link)
 			links, ok := GetLinksFromCache(current.link)
 			if !ok || links == nil || len(links) == 0 {
 				links, err = ScrapperHandlerLinkBuffer(current.link)
 				if err != nil {
-					return nil, counter, fmt.Errorf("error while processing %s: %s", currentNode, err)
+					return nil, counter, fmt.Errorf("error while processing %s: %s", current.link, err)
 				}
 				SetLinksToCache(current.link, links) // Cache the fetched links
 			}
@@ -116,29 +95,6 @@ func DFSHelper(source string, destination string, maxDepth int) ([][]string, int
 }
 
 // IDSHTTPHandler handles HTTP requests for the IDS algorithm.
-				if _, ok := closestDistance[link]; !ok || current.depth <= closestDistance[link] {
-					closestDistance[link] = current.depth
-					if _, ok := parentsVisited[link]; !ok {
-						parentsVisited[link] = make(map[string]struct{})
-					}
-					if _, ok := parentsVisited[link][current.link]; !ok {
-						parents[link] = append(parents[link], current.link)
-						parentsVisited[link][current.link] = struct{}{}
-						stack = append(stack, struct {
-							link  string
-							depth int
-						}{link: link, depth: current.depth + 1})
-					}
-				}
-			}
-		}
-	}
-	if found {
-		paths = reconstructPath(&parents, source, destination)
-	}
-	return paths, counter, nil
-}
-
 func IDSHTTPHandler(c *gin.Context) {
 	type ReqBody struct {
 		Source      string `json:"source"`
