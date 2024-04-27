@@ -27,49 +27,62 @@ func IDSHadlers(source string, destination string, maxDepth int) ([][]string, in
 }
 
 func DFSHelper(source string, destination string, maxDepth int) ([][]string, int, error) {
-	stack := [][]string{{source}}
+	closestDistance := make(map[string]int)
+	closestDistance[source] = 0
+	stack := []struct {
+		link  string
+		depth int
+	}{{
+		link:  source,
+		depth: 0,
+	}}
+	parents := make(map[string][]string)
+	parentsVisited := make(map[string]map[string]struct{})
 	paths := [][]string{}
-	counter := 0
+	found, counter := false, 0
 
 	for len(stack) > 0 {
-		currentPath := stack[len(stack)-1]
+		current := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
-		currentNode := currentPath[len(currentPath)-1]
-		counter++
-
-		if currentNode == destination {
-			paths = append(paths, currentPath)
-		} else if len(currentPath) <= maxDepth {
+		if current.link == destination {
+			found = true
+			continue
+		} else if current.depth < maxDepth {
+			counter++
 			var links []string
 			var err error
-			links, ok := GetLinksFromCache(currentNode)
+			links, ok := GetLinksFromCache(current.link)
 			if !ok || links == nil || len(links) == 0 {
-				links, err = ScrapperHandlerLinkBuffer(currentNode)
+				links, err = ScrapperHandlerLinkBuffer(current.link)
+				// fmt.Println(links)
 				if err != nil {
-					return nil, counter, fmt.Errorf("error while processing %s: %s", currentNode, err)
+					return nil, counter, fmt.Errorf("error while processing %s: %s", current.link, err)
 				}
-				SetLinksToCache(currentNode, links)
+				SetLinksToCache(current.link, links)
 			}
 
 			for _, link := range links {
-				if !isInArray(link, currentPath) {
-					newPath := append([]string(nil), currentPath...)
-					newPath = append(newPath, link)
-					stack = append(stack, newPath)
+				if _, ok := closestDistance[link]; !ok || current.depth <= closestDistance[link] {
+					closestDistance[link] = current.depth
+					if _, ok := parentsVisited[link]; !ok {
+						parentsVisited[link] = make(map[string]struct{})
+					}
+					if _, ok := parentsVisited[link][current.link]; !ok {
+						parents[link] = append(parents[link], current.link)
+						parentsVisited[link][current.link] = struct{}{}
+						stack = append(stack, struct {
+							link  string
+							depth int
+						}{link: link, depth: current.depth + 1})
+					}
 				}
 			}
 		}
 	}
-	return paths, counter, nil
-}
-
-func isInArray(item string, array []string) bool {
-	for _, value := range array {
-		if value == item {
-			return true
-		}
+	if found {
+		paths = reconstructPath(&parents, source, destination)
 	}
-	return false
+	return paths, counter, nil
 }
 
 func IDSHTTPHandler(c *gin.Context) {
