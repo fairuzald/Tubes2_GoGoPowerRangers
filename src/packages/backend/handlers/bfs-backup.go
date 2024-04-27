@@ -19,15 +19,15 @@ func BFSHandlersBackup(source string, destination string, maxDepth int) ([][]str
 	counter := 0
 	found := false
 
-	var wg sync.WaitGroup
-	var mutex sync.Mutex
+	var (
+		wg    sync.WaitGroup
+		mutex sync.Mutex
+		mu    sync.Mutex
+	)
 	// Semaphore to limit the number of concurrent goroutines
 	var sema = make(chan struct{}, 250)
 
-	// Iteration to get
 	for len(queue) > 0 && !found && (maxDepth == 0 || len(queue[0]) <= maxDepth) {
-		// Check if maxDepth is set and the current depth is greater than maxDepth
-
 		queueSameDepth := [][]string{}
 
 		for len(queue) > 0 {
@@ -39,53 +39,24 @@ func BFSHandlersBackup(source string, destination string, maxDepth int) ([][]str
 
 		for _, path := range queueSameDepth {
 			currentNode := path[len(path)-1]
+			counter++
 
-			// Check if the current node is the destination
-			if currentNode == destination {
-				found = true
-				mutex.Lock()
-				paths = append(paths, path)
-				mutex.Unlock()
-			} else if !found {
-				wg.Add(1)
-				// Acquire token semaphore
-				sema <- struct{}{}
-				go func(currentNode string, path []string) {
-					defer wg.Done()
-					// Release token semaphore
-					defer func() { <-sema }()
+			wg.Add(1)
+			sema <- struct{}{}
+			go func(currentNode string, path []string) {
+				defer wg.Done()
+				defer func() { <-sema }()
 
-					// fmt.Println("Goroutine started for node:", currentNode)
+				if currentNode == destination {
+					mu.Lock()
+					defer mu.Unlock()
+					found = true
+					paths = append(paths, path)
+					return
+				}
 
-					// Get links from the current node
-					links, ok := GetLinksFromCache(currentNode)
-					if !ok || links == nil || len(links) == 0 {
-						links2, err := ScrapperHandlerLinkBuffer(currentNode)
-						if err != nil {
-							// Handle error
-							fmt.Println(err)
-							return // Return to avoid deadlock
-						}
-						SetLinksToCache(currentNode, links2)
-						links = links2
-					}
-					counter += len(links)
-
-					mutex.Lock()
-					defer mutex.Unlock()
-					for _, link := range links {
-						if !isInArray(link, path) {
-							// Create a new path by appending the link to the current path
-							newPath := append([]string(nil), path...)
-							newPath = append(newPath, link)
-							queue = append(queue, newPath)
-						}
-					}
-
-					// fmt.Println("Goroutine finished for node:", currentNode)
-				}(currentNode, path)
-
-			}
+				handleLink(currentNode, path, &queue, &mutex)
+			}(currentNode, path)
 		}
 		wg.Wait()
 	}
@@ -93,7 +64,29 @@ func BFSHandlersBackup(source string, destination string, maxDepth int) ([][]str
 	return paths, counter, nil
 }
 
-func BFSHTTPHandlerBAckup(c *gin.Context) {
+func handleLink(currentNode string, path []string, queue *[][]string, mutex *sync.Mutex) {
+	links, ok := GetLinksFromCache(currentNode)
+	if !ok || links == nil || len(links) == 0 {
+		links2, err := ScrapperHandlerLinkBuffer(currentNode)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		SetLinksToCache(currentNode, links2)
+		links = links2
+	}
+
+	mutex.Lock()
+	defer mutex.Unlock()
+	for _, link := range links {
+		if !isInArray(link, path) {
+			newPath := append([]string(nil), path...)
+			newPath = append(newPath, link)
+			*queue = append(*queue, newPath)
+		}
+	}
+}
+func BFSHTTPHandlerBackup(c *gin.Context) {
 	type ReqBody struct {
 		Source      string `json:"source"`
 		Destination string `json:"destination"`
@@ -107,19 +100,25 @@ func BFSHTTPHandlerBAckup(c *gin.Context) {
 		return
 	}
 
+	queryParams := c.Query("method")
+
 	var paths [][]string
 	var err error
 	var count int
 
 	// Measure runtime and set tes accordingly
-	paths, count, err = BFSHandlers(reqBody.Source, reqBody.Destination, 6)
+	if queryParams == "single" {
+		paths, count, err = BFSHandlersSingleBackup(reqBody.Source, reqBody.Destination, 6)
+	} else {
+		paths, count, err = BFSHandlersSingle(reqBody.Source, reqBody.Destination, 6)
+	}
 
 	// Calculate runtime
 	endTime := time.Now()
 	runtime := endTime.Sub(startTime).Seconds()
 
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to perform BFS algorithm"})
 		return
 	}

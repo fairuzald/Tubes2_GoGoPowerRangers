@@ -80,7 +80,7 @@ const SwitchAPIReq = () => {
           destination: state.selectedDestination,
           paths: state.result,
         }),
-        onSuccess: () => {},
+        onSuccess: () => { },
       });
     } catch (error) {
       toast.error("Failed to save data!");
@@ -98,9 +98,10 @@ const SwitchAPIReq = () => {
     setLoading(true);
     try {
       const url = !state.isBFS ? "/ids" : "/bfs";
+      const singleUrl = state.bonus ? url : url + "?method=single"
       await makeApiRequest({
         method: "POST",
-        endpoint: url,
+        endpoint: singleUrl,
         headers: {
           "Content-Type": "application/json",
         },
@@ -196,6 +197,18 @@ const SwitchAPIReq = () => {
   return (
     <section className="flex flex-col gap-5">
       <div className="flex items-center justify-center gap-4">
+        <span className="font-montserrat text-[21px] font-semibold">Single Solution</span>
+        <Switch
+          className="bg-white"
+          checked={state.bonus}
+          onCheckedChange={(checked) =>
+            dispatch({ type: "SET_BONUS", payload: checked })
+          }
+        />
+        <span className="font-montserrat text-[21px] font-semibold">Multiple Solution</span>
+      </div>
+
+      <div className="flex items-center justify-center gap-4">
         <span className="font-montserrat text-[21px] font-semibold">IDS</span>
         <Switch
           className="bg-white"
@@ -206,6 +219,8 @@ const SwitchAPIReq = () => {
         />
         <span className="font-montserrat text-[21px] font-semibold">BFS</span>
       </div>
+
+
 
       <Button
         size={"lg"}

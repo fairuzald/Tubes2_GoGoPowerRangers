@@ -116,3 +116,81 @@ func reconstructPathSingle(parents *map[string]string, source string, destinatio
 
 	return paths
 }
+
+func BFSHandlersSingleBackup(source string, destination string, maxDepth int) ([][]string, int, error) {
+	if source == destination {
+		return [][]string{{source}}, 1, nil
+	}
+
+	queue := [][]string{{source}}
+	paths := [][]string{}
+	visited := make(map[string]struct{})
+	counter := 0
+
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
+	// Semaphore to limit the number of concurrent goroutines
+	var sema = make(chan struct{}, 250)
+
+	// Iteration to get
+	for len(queue) > 0 && (maxDepth == 0 || len(queue[0]) <= maxDepth) {
+		// Check if maxDepth is set and the current depth is greater than maxDepth
+
+		queueSameDepth := [][]string{}
+
+		for len(queue) > 0 {
+			queueSameDepth = append(queueSameDepth, queue[0])
+			queue = queue[1:]
+		}
+
+		fmt.Println("Depth", len(queueSameDepth[0]))
+
+		for _, path := range queueSameDepth {
+			currentNode := path[len(path)-1]
+			counter++
+
+			// Check if the current node is the destination
+			if currentNode == destination {
+				paths = append(paths, path)
+				return paths, counter, nil
+			} else {
+				wg.Add(1)
+				// Acquire token semaphore
+				sema <- struct{}{}
+				go func(currentNode string, path []string) {
+					defer wg.Done()
+					// Release token semaphore
+					defer func() { <-sema }()
+
+					// fmt.Println("Goroutine started for node:", currentNode)
+
+					// Get links from the current node
+
+					links, err := ScrapperHandlerLinkBuffer(currentNode)
+					if err != nil {
+						// Handle error
+						fmt.Println(err)
+						return // Return to avoid deadlock
+					}
+
+					mutex.Lock()
+					defer mutex.Unlock()
+					for _, link := range links {
+						if _, ok := visited[link]; !ok {
+							// Create a new path by appending the link to the current path
+							newPath := append([]string(nil), path...)
+							newPath = append(newPath, link)
+							queue = append(queue, newPath)
+						}
+					}
+
+					// fmt.Println("Goroutine finished for node:", currentNode)
+				}(currentNode, path)
+
+			}
+		}
+		wg.Wait()
+	}
+
+	return paths, counter, nil
+}
