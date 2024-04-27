@@ -14,6 +14,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/autocomplete", handlers.AutoCompleteHandler)
 
 	r.POST("/bfs", handlers.BFSHTTPHandler)
+	r.POST("/bfs/backups", handlers.BFSHTTPHandlerBAckup)
 	r.POST("/ids", handlers.IDSHTTPHandler)
 	r.POST("/save", handlers.SaveCacheHandler)
 	return r
